@@ -11,9 +11,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -e ".[test]"
-      # unit tests + C-vs-Python bit-exactness for every committed int8 model (no torch needed)
+      - run: pip install -r requirements-ci.txt && pip install --no-deps -e .
+      # unit tests + C-vs-Python bit-exactness (committed headers, incl. 2^32 counter wrap), no torch
       - run: python -m pytest -q
-      - name: C builds warning-free (-Wall -Wextra -Werror, also -fsanitize=undefined)
+      - name: same tests with the C harness built under UBSan (any UB aborts)
+        run: SE_CFLAGS="-fsanitize=undefined -fno-sanitize-recover=all" python -m pytest -q tests/test_bitexact.py
+
+  cortex-m4:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
+      - name: compile for Cortex-M4 (thumbv7em, -Os, -Werror) and check the size budget
         run: |
-          cc -std=c99 -O2 -Wall -Wextra -Werror -fsanitize=undefined -Ic -Ic/generated -DMODEL_HEADER='"model_cnn8.h"' c/harness.c c/spike_edge.c -o harness_ubsan
+          set -e
+          FL="-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -ffreestanding -Os -std=c99 -Wall -Wextra -Werror -Ic -Ic/generated"
+          arm-none-eabi-gcc $FL -c c/spike_edge.c -o se.o
+          for m in c/generated/model_*.h; do
+            echo "#include \"$(basename $m)\"" > tu.c; echo "const se_model_t *p = &SE_MODEL;" >> tu.c
+            arm-none-eabi-gcc $FL -c tu.c -o "$(basename $m .h).o"
+          done
+          arm-none-eabi-size se.o model_*.o
+          text=$(arm-none-eabi-size -A se.o | awk '$1==".text"{print $2}')
+          echo "spike_edge.c .text = $text bytes"; test "$text" -lt 2048

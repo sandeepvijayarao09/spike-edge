@@ -17,6 +17,10 @@ ARCHS = {
     "cnn8": [("conv", 8, 5, 2), ("conv", 8, 3, 2), ("dense", 1, 0, 0)],
     "cnn4": [("conv", 4, 5, 2), ("conv", 4, 3, 2), ("dense", 1, 0, 0)],
     "mlp8": [("dense", 8, 0, 0), ("dense", 1, 0, 0)],
+    # linear baselines on the same gated window (32 MACs): logistic regression and a
+    # fixed matched filter (mean training spike as the weight vector)
+    "lin32": [("dense", 1, 0, 0)],
+    "tmpl": [("dense", 1, 0, 0)],
 }
 
 

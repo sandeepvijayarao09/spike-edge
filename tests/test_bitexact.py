@@ -6,7 +6,7 @@ import pytest
 
 from spike_edge import qnn
 from spike_edge.datasets import split, windows
-from spike_edge.export_c import write_header, build, run_harness
+from spike_edge.export_c import header, header_path, build, run_harness
 from spike_edge.frontend import frontend_int, threshold_events
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,7 +31,8 @@ def signals():
 @pytest.mark.parametrize("model_path", MODELS, ids=[p.stem for p in MODELS])
 def test_c_matches_python(model_path, tmp_path):
     name, q, meta = qnn.load(model_path)
-    write_header(name, q)
+    # test the committed header, and check it is the one this model would generate
+    assert header_path(name).read_text() == header(name, q), f"c/generated/model_{name}.h is stale"
     exe = build(name)
     for sig_name, raw in signals():
         sigma = 10.0
@@ -52,3 +53,16 @@ def test_threshold_only_mode(tmp_path):
     y_ref, idx_ref, _ = reference(raw, 45, 256, None, 0)
     y_c, ev = run_harness(exe, raw, 45, 256, 0, tmp_path, no_model=True)
     assert np.array_equal(ev[:, 0], idx_ref) and ev[:, 2].all()
+
+
+def test_counter_wraparound(tmp_path):
+    """Start the C sample counter 1e5 samples before 2^32; events must be identical."""
+    name, q, meta = qnn.load(MODELS[0])
+    exe = build(name)
+    raw = split("test_4", 2)["raw"][:400_000]
+    gate, gain, thr = 30, qnn.input_gain(10.0), int(meta["logit_thr"])
+    y_ref, idx_ref, lg_ref = reference(raw, gate, gain, q, thr)
+    start = 2 ** 32 - 100_000
+    y_c, ev = run_harness(exe, raw, gate, gain, thr, tmp_path, start=start)
+    assert np.any(idx_ref + start >= 2 ** 32), "test must actually cross the wrap"
+    assert np.array_equal(ev[:, 0], idx_ref) and np.array_equal(ev[:, 1], lg_ref)

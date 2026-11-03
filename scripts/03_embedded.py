@@ -22,7 +22,9 @@ NEO_OPS = 3 + 7 + 1     # 2 mul + 1 sub, 7-tap smoothing, compare
 # assumptions for the Cortex-M4 *estimate* (not measured on hardware)
 CYC_PER_MAC = {"plain C (this code)": (2.0, 4.0), "CMSIS-NN style SMLAD": (0.5, 1.0)}
 CYC_FIXED = (20, 40)    # per-sample front-end + state machine incl. load/store, branch
-UW_PER_MHZ = (10, 100)  # typical low-power Cortex-M4 MCU active power range (assumption)
+N_ARRAY = 1024          # channels in the implant-scale budget
+PJ_PER_OP = (0.1, 1.0)  # ASIC energy per 8-16 bit integer op incl. local SRAM access: an ASSUMPTION
+                        # for illustration (not sourced); total energy scales linearly with it
 
 
 def m4_sizes(name):
@@ -44,7 +46,7 @@ def main():
     det = json.loads((ROOT / "results" / "detection.json").read_text())
     cand_rate = float(np.mean([det["levels"][str(l)]["candidates_per_s"] for l in SNR_LEVELS]))
     out = {"candidates_per_s_mean_over_test_levels": cand_rate, "assumptions": dict(
-        cycles_per_mac=CYC_PER_MAC, cycles_fixed_per_sample=CYC_FIXED, uw_per_mhz=UW_PER_MHZ, fs=FS), "models": {}}
+        cycles_per_mac=CYC_PER_MAC, cycles_fixed_per_sample=CYC_FIXED, pj_per_op=PJ_PER_OP, n_array=N_ARRAY, fs=FS), "models": {}}
     chs = [split("test_3", i) for i in range(4)] + [split("test_8", i) for i in range(4)]
     for path in sorted((ROOT / "models").glob("*.npz")):
         name, q, meta = qnn.load(path)
@@ -80,15 +82,25 @@ def main():
         for k, (lo_c, hi_c) in CYC_PER_MAC.items():
             cyc = [CYC_FIXED[0] * FS + cand_rate * mac * lo_c, CYC_FIXED[1] * FS + cand_rate * mac * hi_c]
             mhz = [x / 1e6 for x in cyc]
-            est[k] = dict(cycles_per_s=cyc, mhz_per_channel=mhz,
-                          uw_per_channel=[mhz[0] * UW_PER_MHZ[0], mhz[1] * UW_PER_MHZ[1]])
+            est[k] = dict(cycles_per_s=cyc, mhz_per_channel=mhz)
         out["models"][name] = dict(
             bit_exact=bool(ok), bitexact_events=n_ev, bitexact_samples=n_samp, logit_mismatches=n_mis,
             macs_per_inference=mac, ops_per_inference=per_inf, ops_per_sample=ops,
             weights_bytes=qnn.flash_bytes(q), m4_sizes_bytes=sz,
-            ram_bytes=dict(state=hb["sizeof_state"], activations=2 * 128, window=WIN),
-            host=hb, m4_estimate=est)
+            ram_bytes=dict(state=hb["sizeof_state"], activations_stack=2 * 128, window_stack=WIN),
+            host=hb, m4_estimate=est,
+            array_budget=dict(
+                classifier_mac_per_s_per_channel=cand_rate * mac,
+                frontend_and_gate_ops_per_s_per_channel=(FRONTEND_OPS + TC_OPS) * FS,
+                total_mops_per_s=ops * FS * N_ARRAY / 1e6,
+                classifier_mmac_per_s=cand_rate * mac * N_ARRAY / 1e6,
+                state_sram_kib=hb["sizeof_state"] * N_ARRAY / 1024,
+                weights_bytes_shared=qnn.flash_bytes(q),
+                mw_at_assumed_pj_per_op=[ops * FS * N_ARRAY * pj * 1e-12 * 1e3 for pj in PJ_PER_OP]))
         print(name, json.dumps(out["models"][name]), flush=True)
+    th_ops = FRONTEND_OPS + TC_OPS
+    out["threshold_only_array_budget"] = dict(total_mops_per_s=th_ops * FS * N_ARRAY / 1e6,
+                                              mw_at_assumed_pj_per_op=[th_ops * FS * N_ARRAY * pj * 1e-9 for pj in PJ_PER_OP])
     out["baselines"] = dict(frontend_ops=FRONTEND_OPS, threshold_ops_per_sample=FRONTEND_OPS + TC_OPS,
                             neo_ops_per_sample=FRONTEND_OPS + NEO_OPS)
     (ROOT / "results" / "embedded.json").write_text(json.dumps(out, indent=1))

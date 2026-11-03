@@ -3,10 +3,10 @@ name = "spike-edge"
 version = "0.1.0"
 description = "Spike detection and data reduction under implant-like compute and bandwidth limits"
 requires-python = ">=3.10"
-dependencies = ["numpy>=1.26", "scipy>=1.11", "numba>=0.59", "matplotlib>=3.8"]
+dependencies = ["numpy>=2.0,<3", "scipy>=1.11,<2", "numba>=0.60,<1", "matplotlib>=3.8,<4"]  # exact: requirements-lock.txt
 
 [project.optional-dependencies]
-train = ["torch>=2.2"]
+train = ["torch>=2.2,<3"]
 test = ["pytest>=8"]
 
 [tool.setuptools]

@@ -2,19 +2,26 @@
 Zenodo 10.5281/zenodo.1205233, CC-BY-4.0): mouse retina, 252-ch MEA at 20 kHz,
 loose-patch spike times of one ganglion cell per recording.
 
-Nothing is re-trained or re-tuned: every threshold, the int8 models and their
+Nothing is re-trained or re-tuned on real data: thresholds, int8 models and their
 logit thresholds are the ones chosen on synthetic validation data.
 
-Only one neuron per recording is labelled while the electrode also sees others,
-so precision is NOT measurable. Reported: GT recall at the frozen operating point,
-the event rate, and recall at a matched event rate (each detector's threshold swept).
+Only one neuron per recording is labelled while each electrode also sees others,
+so precision is NOT measurable. Three comparisons, from most to least deployable:
+  1. frozen operating points (label-free): GT recall and event rate of each detector;
+  2. label-free rate matching: each gated model's logit threshold is set so that its
+     event count on the unlabelled 10 s calibration segment equals the tuned
+     threshold detector's count there; recall is then measured on the rest;
+  3. oracle matched rate (needs labels/known rate): GT recall read off each detector's
+     swept recall-vs-rate envelope at the tuned threshold's event rate. The threshold
+     envelope takes the best of 1 ms and 2 ms dead time at every rate.
 
-Real-signal SNR sweep: mix = a * electrode + sqrt(1 - a^2) * donor, where the donor is
-a distant electrode on which the GT unit is invisible (STA SNR < 0.5), scaled so its
-robust sigma *after the front-end* equals the electrode's. Targets are front-end SNRs. Waveforms, noise and the other (unlabelled) neurons stay real; only
-the GT unit's SNR drops to a * native.
+Real-signal SNR sweep: mix = a * electrode + sqrt(1 - a^2) * donor. Donors come from a
+*different* recording: same-recording channels share reference noise (rho ~ -0.65 on
+20160426_patch3), which made mixing cancel noise and raise SNR. Donors are scaled to the
+electrode's robust sigma after the front-end; near-dead channels are excluded; any mix
+whose measured SNR is not below native is dropped.
 
-Usage: python -I scripts/05_real_data.py data/yger2018 [data/yger2018_...] ...
+Usage: python -I scripts/05_real_data.py data/yger2018_<rec> [data/yger2018_<rec> ...]
 """
 import json, re, sys
 from pathlib import Path
@@ -28,9 +35,10 @@ from spike_edge.datasets import calibrate, windows, CAL_S
 from spike_edge.frontend import frontend_int, frontend_float, robust_sigma, threshold_events, peak_events, neo
 from spike_edge.metrics import match
 
-MIN_SNR = 4.0        # use electrodes where the GT unit's raw STA trough / sigma >= this
+MIN_SNR = 4.0        # electrodes where the GT unit's raw STA trough / sigma >= this
 NOISE_COUNTS = 5.0   # rescale so raw robust sigma ~ 5 counts, as in the synthetic 10-bit ADC model
-TARGETS = [None, 6.0, 5.0, 4.0, 3.0]   # None = native SNR
+TARGETS = [None, 6.0, 5.0, 4.0, 3.0]   # front-end SNR targets; None = native
+GATED = ("mlp8", "cnn8", "lin32", "tmpl")
 
 
 def load(d):
@@ -64,13 +72,13 @@ def juxta_triggers(j, k, dead=40):
     return np.array(keep, np.int64)
 
 
-def electrodes(x, tr, juxta):
-    """All extracellular channels as (raw STA trough / robust sigma, channel, sigma), best first."""
+def channel_stats(x, tr, skip):
+    """Per channel: (raw STA trough / robust sigma, channel, robust sigma), best first."""
     seg = slice(0, 20 * FS)
     t = tr[(tr > 40) & (tr < x.shape[0] - 40)][:500]
     out = []
     for k in range(x.shape[1]):
-        if k == juxta:
+        if k in skip:
             continue
         c = x[seg, k].astype(np.float64); med = np.median(c)
         s = np.median(np.abs(c - med)) / 0.6745
@@ -81,51 +89,24 @@ def electrodes(x, tr, juxta):
     return sorted(out, reverse=True)
 
 
-def evaluate(y, tr, det, models):
-    sig = calibrate(y)
-    t = tr[(tr > 60) & (tr < len(y) - 60)]
-    sta = y[t[:, None] + np.arange(-40, 41)].mean(0)
-    lag = int(np.argmin(sta)) - 40          # patch spike peak -> extracellular trough
-    gt = t + lag
-    lo = CAL_S * FS; gt = gt[gt >= lo]; dur = (len(y) - lo) / FS
+def normed(x, k, s, n=None):
+    v = (x[:, k].astype(np.float64) - np.median(x[: 20 * FS, k])) * NOISE_COUNTS / s
+    return v if n is None else np.resize(v, n)   # tile a shorter donor recording
 
-    def score(ev):
-        ev = ev[ev >= lo]; tp, _, _ = match(ev, gt)
-        return dict(recall=tp / len(gt), events_per_s=len(ev) / dur)
 
-    r = dict(frontend_snr=float(-sta.min() / sig), gt_lag_samples=lag, n_gt=int(len(gt)),
-             gt_rate_hz=len(gt) / dur, frozen={}, curves={})
-    f = r["frozen"]
-    f["tc4.5"] = score(threshold_events(y, int(round(4.5 * sig))))
-    f["tc_dead"] = score(threshold_events(y, int(round(det["tc_dead_k"] * sig)), det["tc_dead_samples"]))
-    e = neo(y)
-    f["neo"] = score(peak_events(e, det["neo_c"] * e[FS // 10: FS // 10 + CAL_S * FS].mean()))
-    idx, w = windows(y, threshold_events(y, int(round(3.0 * sig))))
-    xq = qnn.quantize_input(w, qnn.input_gain(sig))
-    f["gate"] = score(idx)
-    logits = {}
-    for m, (_, q, mm) in models.items():
-        logits[m] = qnn.run_int(q, xq)
-        f[f"{m}_int8"] = score(idx[logits[m] > mm["logit_thr"]])
-    r["curves"]["threshold_tuned_dead"] = [dict(k=float(k), **score(threshold_events(y, int(round(k * sig)), det["tc_dead_samples"])))
-                                           for k in np.arange(2.5, 8.01, 0.25)]
-    sc = models["mlp8"][1][-1]["logit_scale"]
-    r["curves"]["gated_mlp8"] = [dict(logit=float(th), **score(idx[logits["mlp8"] > th / sc])) for th in np.arange(-8, 10.01, 0.5)]
-    rate = f["tc_dead"]["events_per_s"]
-    r["matched_rate_events_per_s"] = rate
-    r["recall_at_matched_rate"] = {}
-    for name, cur in r["curves"].items():
-        pts = sorted((p["events_per_s"], p["recall"]) for p in cur)
-        xs, ys = zip(*pts)
-        # only interpolate inside the swept range; outside it the value is not measured
-        r["recall_at_matched_rate"][name] = float(np.interp(rate, xs, ys)) if xs[0] <= rate <= xs[-1] else None
-    return r
+def fe_sigma(v):
+    return robust_sigma(frontend_float(v[: 20 * FS])[FS // 10:])
+
+
+def envelope_recall(points, rate):
+    """Best recall achievable at an event rate <= `rate` (upper-left envelope)."""
+    ok = [r for e, r in points if e <= rate + 1e-3]   # curve rates are rounded to 1e-3
+    return max(ok) if ok else None
 
 
 def bitexact(ch16, model, wd):
-    from spike_edge.export_c import write_header, build, run_harness
+    from spike_edge.export_c import build, run_harness
     name, q, mm = model
-    write_header(name, q)
     y = frontend_int(ch16); sig = calibrate(y)
     gate, gain, thr = int(round(3.0 * sig)), qnn.input_gain(sig), int(mm["logit_thr"])
     idx, w = windows(y, threshold_events(y, gate))
@@ -134,51 +115,121 @@ def bitexact(ch16, model, wd):
     return bool(np.array_equal(yc.astype(np.int32), y) and np.array_equal(ev[:, 0], idx) and np.array_equal(ev[:, 1], lg))
 
 
+def evaluate(y, tr, det, models):
+    sig = calibrate(y)
+    t = tr[(tr > 60) & (tr < len(y) - 60)]
+    sta = y[t[:, None] + np.arange(-40, 41)].mean(0)
+    lag = int(np.argmin(sta)) - 40          # patch spike peak -> extracellular trough
+    gt = t + lag
+    lo = CAL_S * FS; cal = (FS // 10, lo)
+    gt = gt[gt >= lo]; dur = (len(y) - lo) / FS
+
+    def score(ev):
+        ev = ev[ev >= lo]; tp, _, _ = match(ev, gt)
+        return dict(recall=tp / len(gt), events_per_s=len(ev) / dur)
+
+    r = dict(frontend_snr=float(-sta.min() / sig), frontend_ptp_snr=float((sta.max() - sta.min()) / sig),
+             gt_lag_samples=lag, n_gt=int(len(gt)), gt_rate_hz=len(gt) / dur, frozen={}, curves={})
+    f = r["frozen"]
+    f["tc4.5"] = score(threshold_events(y, int(round(4.5 * sig))))
+    tc_dead = threshold_events(y, int(round(det["tc_dead_k"] * sig)), det["tc_dead_samples"])
+    f["tc_dead"] = score(tc_dead)
+    e = neo(y)
+    f["neo"] = score(peak_events(e, det["neo_c"] * e[FS // 10: FS // 10 + CAL_S * FS].mean()))
+    idx, w = windows(y, threshold_events(y, int(round(3.0 * sig))))
+    xq = qnn.quantize_input(w, qnn.input_gain(sig))
+    f["gate"] = score(idx)
+    logits = {}
+    for m in GATED:
+        _, q, mm = models[m]
+        logits[m] = qnn.run_int(q, xq).astype(np.int64)
+        f[f"{m}_int8"] = score(idx[logits[m] > mm["logit_thr"]])
+
+    # swept curves: (events/s, recall)
+    ks = np.arange(2.5, 8.01, 0.125)
+    r["curves"]["threshold"] = [(round(s["events_per_s"], 3), round(s["recall"], 4)) for dd in (20, 40) for k in ks
+                                for s in [score(threshold_events(y, int(round(k * sig)), dd))]]
+    for m in GATED:
+        ths = np.unique(np.quantile(logits[m], np.linspace(0, 1, 121)))
+        r["curves"][m] = [(round(s["events_per_s"], 3), round(s["recall"], 4)) for th in ths for s in [score(idx[logits[m] > th])]]
+
+    rate = f["tc_dead"]["events_per_s"]
+    r["matched_rate_events_per_s"] = rate
+    r["oracle_recall_at_matched_rate"] = {k: envelope_recall(v, rate) for k, v in r["curves"].items()}
+
+    # label-free: match the tuned threshold's event count on the unlabelled calibration segment
+    in_cal = (idx >= cal[0]) & (idx < cal[1])
+    target = int(np.sum((tc_dead >= cal[0]) & (tc_dead < cal[1])))
+    r["label_free_rate_matched"] = {"tc_dead": f["tc_dead"]}
+    for m in GATED:
+        lg = np.sort(logits[m][in_cal])[::-1]
+        th = lg[target] if target < len(lg) else lg[-1] - 1   # keep exactly `target` cal events
+        r["label_free_rate_matched"][m] = score(idx[logits[m] > th])
+    return r
+
+
 def main():
     det = json.loads((ROOT / "results" / "detection.json").read_text())["selected"]
-    models = {m: qnn.load(ROOT / "models" / f"{m}.npz") for m in ("cnn8", "cnn4", "mlp8")}
+    models = {m: qnn.load(ROOT / "models" / f"{m}.npz") for m in GATED}
+    recs = [(d, *load(d)) for d in sys.argv[1:]]
     out = {"source": "Yger et al. 2018 eLife 7:e34518; zenodo.org/records/1205233 (CC-BY-4.0)",
-           "frozen_from_synthetic": det, "results": []}
-    for d in sys.argv[1:]:
-        x, tr, meta = load(d)
-        allr = electrodes(x, tr, int(meta["juxta_channel"]))
-        ranked = [e for e in allr if e[0] >= MIN_SNR]
-        donors = [(k, s) for v, k, s in allr[::-1] if v < 0.5][:4]
+           "frozen_from_synthetic": det, "results": [], "excluded_mixes": []}
+    for ri, (d, x, tr, meta) in enumerate(recs):
+        stats = channel_stats(x, tr, {int(meta["juxta_channel"])})
+        ranked = [e for e in stats if e[0] >= MIN_SNR]
+        # donors: another recording, channels with typical (not near-dead) noise
+        _, dx, dtr, dmeta = recs[(ri + 1) % len(recs)]
+        dst = channel_stats(dx, dtr, {int(dmeta["juxta_channel"])})
+        q25, q75 = np.percentile([s for _, _, s in dst], [25, 75])
+        donors = [(k, s) for v, k, s in dst if v < 0.5 and q25 <= s <= q75][:4]
         print(d, f"{x.shape[0]/FS:.0f}s, {len(tr)} GT spikes; electrodes:",
-              [(k, round(v, 1)) for v, k, _ in ranked], "donors:", [k for k, _ in donors], flush=True)
-
-        def norm(k, s):
-            return (x[:, k].astype(np.float64) - np.median(x[: 20 * FS, k])) * NOISE_COUNTS / s
-
-        def fe_sigma(v):
-            return robust_sigma(frontend_float(v[: 20 * FS])[FS // 10:])
-
+              [(k, round(v, 1)) for v, k, _ in ranked], f"donors from {dmeta['name']}:", [k for k, _ in donors], flush=True)
         for raw_snr, k, s_raw in ranked:
-            base = norm(k, s_raw)
-            native = evaluate(frontend_int(np.clip(np.round(base), -512, 511).astype(np.int16)), tr, det, models)["frontend_snr"]
+            base = normed(x, k, s_raw)
+            native = None
             for i, target in enumerate(TARGETS):
-                if target is not None and target >= native:
-                    continue
-                a = 1.0 if target is None else target / native
-                donor = None if target is None else donors[i % len(donors)][0]
                 if target is None:
-                    sig_in = base
+                    sig_in, a, donor, rho = base, 1.0, None, None
                 else:
-                    dn = norm(*donors[i % len(donors)])
-                    sig_in = a * base + np.sqrt(1 - a * a) * dn * (fe_sigma(base) / fe_sigma(dn))
-                y = frontend_int(np.clip(np.round(sig_in), -512, 511).astype(np.int16))
+                    if target >= native - 0.25:
+                        continue
+                    a = target / native
+                    dk, ds = donors[i % len(donors)]
+                    dn = normed(dx, dk, ds, len(base))
+                    dn *= fe_sigma(base) / fe_sigma(dn)
+                    rho = float(np.corrcoef(frontend_float(base[: 20 * FS]), frontend_float(dn[: 20 * FS]))[0, 1])
+                    sig_in, donor = a * base + np.sqrt(1 - a * a) * dn, f"{dmeta['name']}/e{dk}"
                 ch16 = np.clip(np.round(sig_in), -512, 511).astype(np.int16)
-                if target is None:          # C pipeline on real data, bit for bit
-                    r_bx = bitexact(ch16, models["mlp8"], ROOT / "build" / "real_bx")
-                r = dict(recording=meta["name"], triggers_reconstructed=bool(meta.get("triggers_reconstructed")), electrode=k, raw_snr=raw_snr, target_snr=target,
-                         c_bitexact_native=r_bx,
-                         attenuation=a, donor=donor, **evaluate(y, tr, det, models))
+                r = evaluate(frontend_int(ch16), tr, det, models)
+                r.update(recording=meta["name"], triggers_reconstructed=bool(meta.get("triggers_reconstructed")),
+                         electrode=k, raw_snr=raw_snr, target_snr=target, attenuation=a, donor=donor, donor_noise_corr=rho)
+                if target is None:
+                    native = r["frontend_snr"]
+                    r["c_bitexact"] = bitexact(ch16, models["mlp8"], ROOT / "build" / "real_bx")
+                elif r["frontend_snr"] >= native - 0.25:
+                    out["excluded_mixes"].append({k2: r[k2] for k2 in ("recording", "electrode", "target_snr", "frontend_snr", "donor")})
+                    continue
                 out["results"].append(r)
-                mr = r["recall_at_matched_rate"]
-                print(f"  e{k} target {target}: fe-SNR {r['frontend_snr']:.1f} n_gt {r['n_gt']} | " +
-                      " ".join(f"{m}={v['recall']:.3f}@{v['events_per_s']:.0f}/s" for m, v in r["frozen"].items()) +
-                      f" | matched {r['matched_rate_events_per_s']:.0f}/s: TC {mr['threshold_tuned_dead']} MLP {mr['gated_mlp8']}", flush=True)
-    (ROOT / "results" / "real_yger2018.json").write_text(json.dumps(out, indent=1))
+                o = r["oracle_recall_at_matched_rate"]; lf = r["label_free_rate_matched"]
+                fz = " ".join(f"{m}={v['recall']:.3f}@{v['events_per_s']:.0f}/s" for m, v in r["frozen"].items()
+                              if m in ("tc4.5", "tc_dead", "mlp8_int8", "lin32_int8"))
+                print(f"  e{k} {'native' if target is None else f'target {target}'}: SNR {r['frontend_snr']:.1f} | {fz} | "
+                      f"oracle@{r['matched_rate_events_per_s']:.0f}/s TC {o['threshold']} MLP {o['mlp8']} LIN {o['lin32']} | "
+                      f"label-free MLP {lf['mlp8']['recall']:.3f}@{lf['mlp8']['events_per_s']:.0f}/s", flush=True)
+
+    cells = {}
+    for r in out["results"]:
+        o = r["oracle_recall_at_matched_rate"]
+        for m in GATED:
+            if o[m] is not None and o["threshold"] is not None:
+                cells.setdefault(r["recording"], {}).setdefault(m, []).append(o[m] - o["threshold"])
+    out["per_cell_delta_recall_vs_threshold"] = {
+        c: {m: dict(mean=float(np.mean(v)), min=float(np.min(v)), max=float(np.max(v)), n_conditions=len(v)) for m, v in dd.items()}
+        for c, dd in cells.items()}
+    for c, dd in out["per_cell_delta_recall_vs_threshold"].items():
+        print(c, {m: round(v["mean"], 3) for m, v in dd.items()})
+    print("excluded mixes:", out["excluded_mixes"])
+    (ROOT / "results" / "real_yger2018.json").write_text(json.dumps(out, separators=(",", ":")))
 
 
 if __name__ == "__main__":

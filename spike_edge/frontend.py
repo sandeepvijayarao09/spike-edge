@@ -1,6 +1,6 @@
 """Integer front-end and event logic shared by every detector.
 
-Front-end (all int32, Q8 state, ~8 add/shift ops per sample, no multiplies):
+Front-end (all int32, Q8 state, 13 add/sub/shift ops per sample, no multiplies):
     xs  = x << 8
     s1 += (xs - s1) >> KS ; h1 = xs - s1          # 1st-order high-pass (~200 Hz)
     s2 += (h1 - s2) >> KS ; h2 = h1 - s2          # 2nd high-pass stage

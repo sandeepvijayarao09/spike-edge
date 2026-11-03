@@ -41,33 +41,42 @@ def header(arch_name, q):
     return "".join(s)
 
 
+def header_path(arch_name):
+    return CDIR / "generated" / f"model_{arch_name}.h"
+
+
 def write_header(arch_name, q):
-    p = CDIR / "generated" / f"model_{arch_name}.h"
+    p = header_path(arch_name)
     p.parent.mkdir(exist_ok=True)
     p.write_text(header(arch_name, q))
     return p
 
 
 def build(arch_name, opt="-O2"):
+    """Host harness against the committed header. SE_CFLAGS (env) adds flags, e.g.
+    '-fsanitize=undefined -fno-sanitize-recover=all' in CI."""
+    import os
     out = ROOT / "build" / f"harness_{arch_name}"
     out.parent.mkdir(exist_ok=True)
-    subprocess.run(["cc", "-std=c99", opt, "-Wall", "-Wextra", "-Werror", f"-I{CDIR}", f"-I{CDIR/'generated'}",
+    extra = os.environ.get("SE_CFLAGS", "").split()
+    subprocess.run(["cc", "-std=c99", opt, "-Wall", "-Wextra", "-Werror", *extra, f"-I{CDIR}", f"-I{CDIR/'generated'}",
                     f'-DMODEL_HEADER="model_{arch_name}.h"', str(CDIR / "harness.c"), str(CDIR / "spike_edge.c"),
                     "-o", str(out)], check=True)
     return out
 
 
-def run_harness(exe, raw, gate_thr, gain, logit_thr, workdir, no_model=False):
+def run_harness(exe, raw, gate_thr, gain, logit_thr, workdir, no_model=False, start=0):
     workdir = Path(workdir); workdir.mkdir(parents=True, exist_ok=True)
     fin, fout = workdir / "in.bin", workdir / "out.bin"
     with open(fin, "wb") as f:
         np.array([len(raw), gate_thr, gain, logit_thr], np.int32).tofile(f)
         raw.astype(np.int16).tofile(f)
-    cmd = [str(exe), str(fin), str(fout)] + (["--no-model"] if no_model else [])
+    cmd = [str(exe), str(fin), str(fout)] + (["--no-model"] if no_model else []) + ["--start", str(start)]
     subprocess.run(cmd, check=True, capture_output=True)
     b = fout.read_bytes()
     n = len(raw)
     y = np.frombuffer(b[: 2 * n], np.int16)
     n_ev = int(np.frombuffer(b[2 * n: 2 * n + 4], np.int32)[0])
-    ev = np.frombuffer(b[2 * n + 4:], np.int32).reshape(n_ev, 3)
+    ev = np.frombuffer(b[2 * n + 4:], np.int32).reshape(n_ev, 3).astype(np.int64)
+    ev[:, 0] = (ev[:, 0] - start) % (1 << 32)   # back to stream-relative indices
     return y, ev
