@@ -1,0 +1,19 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[test]"
+      # unit tests + C-vs-Python bit-exactness for every committed int8 model (no torch needed)
+      - run: python -m pytest -q
+      - name: C builds warning-free (-Wall -Wextra -Werror, also -fsanitize=undefined)
+        run: |
+          cc -std=c99 -O2 -Wall -Wextra -Werror -fsanitize=undefined -Ic -Ic/generated -DMODEL_HEADER='"model_cnn8.h"' c/harness.c c/spike_edge.c -o harness_ubsan

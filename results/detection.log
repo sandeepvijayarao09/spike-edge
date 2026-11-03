@@ -1,0 +1,20 @@
+train: 64 ch in 5s
+val: 16 ch in 1s
+TC tuned k/dead 3.75 40
+TC best k 4.0 NEO C 6.0
+train windows 230738 pos 0.582; val gate recall 0.891
+cnn8: 169s  val F1 float 0.9164 int8 0.9165  MACs 1760
+cnn4: 159s  val F1 float 0.9163 int8 0.9164  MACs 592
+mlp8: 1s  val F1 float 0.9165 int8 0.9167  MACs 264
+test_2: 32 ch in 1s
+2 {'tc4.5': np.float64(0.025), 'tc_best': np.float64(0.079), 'tc_dead': np.float64(0.139), 'neo': np.float64(0.138), 'gate': np.float64(0.308), 'cnn8_float': np.float64(0.22), 'cnn8_int8': np.float64(0.219), 'cnn4_float': np.float64(0.236), 'cnn4_int8': np.float64(0.234), 'mlp8_float': np.float64(0.217), 'mlp8_int8': np.float64(0.216)} cand/s 27
+test_3: 32 ch in 1s
+3 {'tc4.5': np.float64(0.209), 'tc_best': np.float64(0.381), 'tc_dead': np.float64(0.486), 'neo': np.float64(0.37), 'gate': np.float64(0.561), 'cnn8_float': np.float64(0.677), 'cnn8_int8': np.float64(0.676), 'cnn4_float': np.float64(0.688), 'cnn4_int8': np.float64(0.686), 'mlp8_float': np.float64(0.674), 'mlp8_int8': np.float64(0.673)} cand/s 40
+test_4: 32 ch in 1s
+4 {'tc4.5': np.float64(0.54), 'tc_best': np.float64(0.701), 'tc_dead': np.float64(0.758), 'neo': np.float64(0.662), 'gate': np.float64(0.711), 'cnn8_float': np.float64(0.878), 'cnn8_int8': np.float64(0.877), 'cnn4_float': np.float64(0.879), 'cnn4_int8': np.float64(0.879), 'mlp8_float': np.float64(0.875), 'mlp8_int8': np.float64(0.875)} cand/s 53
+test_5: 32 ch in 1s
+5 {'tc4.5': np.float64(0.757), 'tc_best': np.float64(0.84), 'tc_dead': np.float64(0.867), 'neo': np.float64(0.766), 'gate': np.float64(0.71), 'cnn8_float': np.float64(0.945), 'cnn8_int8': np.float64(0.945), 'cnn4_float': np.float64(0.943), 'cnn4_int8': np.float64(0.943), 'mlp8_float': np.float64(0.944), 'mlp8_int8': np.float64(0.944)} cand/s 53
+test_6: 32 ch in 1s
+6 {'tc4.5': np.float64(0.89), 'tc_best': np.float64(0.92), 'tc_dead': np.float64(0.935), 'neo': np.float64(0.848), 'gate': np.float64(0.716), 'cnn8_float': np.float64(0.972), 'cnn8_int8': np.float64(0.972), 'cnn4_float': np.float64(0.969), 'cnn4_int8': np.float64(0.969), 'mlp8_float': np.float64(0.972), 'mlp8_int8': np.float64(0.972)} cand/s 56
+test_8: 32 ch in 1s
+8 {'tc4.5': np.float64(0.938), 'tc_best': np.float64(0.904), 'tc_dead': np.float64(0.95), 'neo': np.float64(0.928), 'gate': np.float64(0.69), 'cnn8_float': np.float64(0.977), 'cnn8_int8': np.float64(0.977), 'cnn4_float': np.float64(0.975), 'cnn4_int8': np.float64(0.975), 'mlp8_float': np.float64(0.978), 'mlp8_int8': np.float64(0.978)} cand/s 65

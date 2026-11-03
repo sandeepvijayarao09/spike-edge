@@ -1,0 +1,211 @@
+{
+ "candidates_per_s_mean_over_test_levels": 48.95364583333333,
+ "assumptions": {
+  "cycles_per_mac": {
+   "plain C (this code)": [
+    2.0,
+    4.0
+   ],
+   "CMSIS-NN style SMLAD": [
+    0.5,
+    1.0
+   ]
+  },
+  "cycles_fixed_per_sample": [
+   20,
+   40
+  ],
+  "uw_per_mhz": [
+   10,
+   100
+  ],
+  "fs": 20000
+ },
+ "models": {
+  "cnn4": {
+   "bit_exact": true,
+   "bitexact_events": 21139,
+   "bitexact_samples": 6400000,
+   "logit_mismatches": 0,
+   "macs_per_inference": 592,
+   "ops_per_inference": 899,
+   "ops_per_sample": 17.200466380208333,
+   "weights_bytes": 192,
+   "m4_sizes_bytes": {
+    "text": 982,
+    "bss": 256,
+    "data": 4,
+    "rodata": 284
+   },
+   "ram_bytes": {
+    "state": 192,
+    "activations": 256,
+    "window": 32
+   },
+   "host": {
+    "ns_per_sample_frontend": 3.246,
+    "ns_per_sample_threshold": 3.334,
+    "ns_per_sample_gated_model": 4.038,
+    "ns_per_inference": 296.71,
+    "candidates": 1902,
+    "samples": 800000,
+    "sizeof_state": 192
+   },
+   "m4_estimate": {
+    "plain C (this code)": {
+     "cycles_per_s": [
+      457961.1166666667,
+      915922.2333333334
+     ],
+     "mhz_per_channel": [
+      0.4579611166666667,
+      0.9159222333333334
+     ],
+     "uw_per_channel": [
+      4.579611166666667,
+      91.59222333333335
+     ]
+    },
+    "CMSIS-NN style SMLAD": {
+     "cycles_per_s": [
+      414490.2791666667,
+      828980.5583333333
+     ],
+     "mhz_per_channel": [
+      0.4144902791666667,
+      0.8289805583333334
+     ],
+     "uw_per_channel": [
+      4.1449027916666665,
+      82.89805583333334
+     ]
+    }
+   }
+  },
+  "cnn8": {
+   "bit_exact": true,
+   "bitexact_events": 21139,
+   "bitexact_samples": 6400000,
+   "logit_mismatches": 0,
+   "macs_per_inference": 1760,
+   "ops_per_inference": 2307,
+   "ops_per_sample": 20.646803046875,
+   "weights_bytes": 476,
+   "m4_sizes_bytes": {
+    "text": 982,
+    "bss": 256,
+    "data": 4,
+    "rodata": 568
+   },
+   "ram_bytes": {
+    "state": 192,
+    "activations": 256,
+    "window": 32
+   },
+   "host": {
+    "ns_per_sample_frontend": 3.237,
+    "ns_per_sample_threshold": 3.359,
+    "ns_per_sample_gated_model": 5.192,
+    "ns_per_inference": 769.56,
+    "candidates": 1902,
+    "samples": 800000,
+    "sizeof_state": 192
+   },
+   "m4_estimate": {
+    "plain C (this code)": {
+     "cycles_per_s": [
+      572316.8333333334,
+      1144633.6666666667
+     ],
+     "mhz_per_channel": [
+      0.5723168333333334,
+      1.1446336666666668
+     ],
+     "uw_per_channel": [
+      5.723168333333334,
+      114.46336666666667
+     ]
+    },
+    "CMSIS-NN style SMLAD": {
+     "cycles_per_s": [
+      443079.2083333333,
+      886158.4166666666
+     ],
+     "mhz_per_channel": [
+      0.4430792083333333,
+      0.8861584166666666
+     ],
+     "uw_per_channel": [
+      4.430792083333333,
+      88.61584166666667
+     ]
+    }
+   }
+  },
+  "mlp8": {
+   "bit_exact": true,
+   "bitexact_events": 21139,
+   "bitexact_samples": 6400000,
+   "logit_mismatches": 0,
+   "macs_per_inference": 264,
+   "ops_per_inference": 355,
+   "ops_per_sample": 15.868927213541667,
+   "weights_bytes": 364,
+   "m4_sizes_bytes": {
+    "text": 982,
+    "bss": 256,
+    "data": 4,
+    "rodata": 428
+   },
+   "ram_bytes": {
+    "state": 192,
+    "activations": 256,
+    "window": 32
+   },
+   "host": {
+    "ns_per_sample_frontend": 3.24,
+    "ns_per_sample_threshold": 3.346,
+    "ns_per_sample_gated_model": 3.374,
+    "ns_per_inference": 19.73,
+    "candidates": 1902,
+    "samples": 800000,
+    "sizeof_state": 192
+   },
+   "m4_estimate": {
+    "plain C (this code)": {
+     "cycles_per_s": [
+      425847.525,
+      851695.05
+     ],
+     "mhz_per_channel": [
+      0.425847525,
+      0.85169505
+     ],
+     "uw_per_channel": [
+      4.25847525,
+      85.169505
+     ]
+    },
+    "CMSIS-NN style SMLAD": {
+     "cycles_per_s": [
+      406461.88125,
+      812923.7625
+     ],
+     "mhz_per_channel": [
+      0.40646188125,
+      0.8129237625
+     ],
+     "uw_per_channel": [
+      4.0646188125,
+      81.29237625
+     ]
+    }
+   }
+  }
+ },
+ "baselines": {
+  "frontend_ops": 13,
+  "threshold_ops_per_sample": 15,
+  "neo_ops_per_sample": 24
+ }
+}
