@@ -13,7 +13,7 @@ R = ROOT / "results"; FIG = ROOT / "figures"
 det = json.loads((R / "detection.json").read_text())
 emb = json.loads((R / "embedded.json").read_text())
 red = {k: json.loads((R / f"reduction{k}.json").read_text()) for k in ("", "_untuned")}
-REAL = R / "real_yger2018.json"
+REAL = R / "real_paired_gt.json"
 real = json.loads(REAL.read_text()) if REAL.exists() else None
 LV = list(det["levels"])
 SEL = det["selected"]
@@ -119,42 +119,68 @@ def win(a, b):
 def table_real():
     if real is None:
         return "_not run_"
-    rr = real["results"]
-    out = ("| Cell / electrode | condition | SNR (ptp) | GT Hz | frozen: threshold tuned | frozen: logistic int8 | frozen: MLP-8 int8 | "
-           "label-free rate-matched MLP-8 | oracle @ matched rate (ev/s): threshold envelope vs MLP-8 | … vs logistic |\n"
-           "|---|---|---|---:|---|---|---|---|---|---|\n")
-    cell = lambda d: f"{d['recall']:.3f} @ {d['events_per_s']:.0f}/s"
-    for r in sorted(rr, key=lambda r: (r["recording"], r["electrode"], -r["frontend_snr"])):
-        f = r["frozen"]; o = r["oracle_recall_at_matched_rate"]; lf = r["label_free_rate_matched"]
-        cond = "native" if r["target_snr"] is None else f"×{r['attenuation']:.2f} + {r['donor']} (ρ={r['donor_noise_corr']:+.2f})"
-        out += (f"| {r['recording']} / e{r['electrode']} | {cond} | {r['frontend_snr']:.1f} ({r['frontend_ptp_snr']:.1f}) | {r['gt_rate_hz']:.1f} | "
-                f"{cell(f['tc_dead'])} | {cell(f['lin32_int8'])} | {cell(f['mlp8_int8'])} | {cell(lf['mlp8'])} | "
-                f"({r['matched_rate_events_per_s']:.0f}) {win(o['threshold'], o['mlp8'])} | {win(o['threshold'], o['lin32'])} |\n")
-    out += "\n**Per cell** (mean [min, max] Δrecall vs the threshold envelope at matched rate, over that cell's conditions):\n\n| Cell | conditions | MLP-8 | logistic | matched filter | CNN-8 |\n|---|---:|---|---|---|---|\n"
-    for c, d in real["per_cell_delta_recall_vs_threshold"].items():
-        g = lambda m: f"{d[m]['mean']:+.3f} [{d[m]['min']:+.3f}, {d[m]['max']:+.3f}]"
-        out += f"| {c} | {d['mlp8']['n_conditions']} | {g('mlp8')} | {g('lin32')} | {g('tmpl')} | {g('cnn8')} |\n"
-    bx = [r["c_bitexact"] for r in rr if r["target_snr"] is None]
-    out += f"\nC pipeline bit-exact with Python on the native real electrodes: {sum(bx)}/{len(bx)}. "
-    out += f"Mixes dropped because the measured SNR was not below native: {len(real['excluded_mixes'])}.\n"
+    pc, ag = real["cells"]["per_cell"], real["cells"]["aggregate"]
+    M = [("mlp8", "MLP-8"), ("cnn8", "CNN-8"), ("lin32", "logistic"), ("tmpl", "matched filter")]
+    fmt = lambda v: f"{v['mean']:+.3f} [{v['ci95'][0]:+.3f}, {v['ci95'][1]:+.3f}] · {v['wins']}/{v['ties']}/{v['losses']} · p={v['sign_test_p']:.3g}"
+    out = ("**Across cells** (one sample per cell = mean over its native ≥4σ electrodes). Entries are mean Δrecall vs the tuned "
+           "threshold [95% bootstrap CI over cells] · wins/ties/losses (±0.01) · two-sided sign test p.\n\n"
+           "| Scope | cells | comparison | " + " | ".join(n for _, n in M) + " |\n|---|---:|---|" + "---|" * len(M) + "\n")
+    for scope, d in ag.items():
+        for key, lab in (("label_free", "label-free rate-matched (primary)"), ("oracle_matched", "oracle matched rate")):
+            out += f"| {scope} | {d['n_cells']} | {lab} | " + " | ".join(fmt(d[f'{key}_{m}']) for m, _ in M) + " |\n"
+    out += ("\n**Per cell** (label-free Δrecall vs tuned threshold, native electrodes):\n\n"
+            "| Cell | dataset | electrodes | SNR range | threshold recall | " + " | ".join(f"Δ {n}" for _, n in M) + " | MLP/threshold event-rate ratio |\n"
+            "|---|---|---:|---|---:|" + "---:|" * len(M) + "---:|\n")
+    nat = {}
+    for r in real["results"]:
+        if r["target_snr"] is None:
+            nat.setdefault(r["recording"], []).append(r["label_free_rate_matched"]["tc_dead"]["recall"])
+    for c, v in sorted(pc.items(), key=lambda kv: (kv[1]["dataset"], kv[0])):
+        out += (f"| {c} | {v['dataset'].split(' (')[0]} | {v['n_electrodes']} | {min(v['snr']):.1f}–{max(v['snr']):.1f} | {np.mean(nat[c]):.3f} | "
+                + " | ".join(f"{v[f'label_free_{m}']:+.3f}" for m, _ in M) + f" | {v['rate_ratio_label_free_mlp8']:.2f} |\n")
+    mixes = [r for r in real["results"] if r["target_snr"] is not None]
+    if mixes:
+        out += "\n**Real-signal SNR sweep** (attenuated electrode + cross-recording noise; rows reuse the same cells, so not independent):\n\n"
+        out += "| measured SNR | conditions | mean label-free Δ MLP-8 | mean Δ logistic | mean Δ matched filter |\n|---|---:|---:|---:|---:|\n"
+        for lo, hi in ((0, 3.5), (3.5, 4.5), (4.5, 5.5), (5.5, 99)):
+            rr = [r for r in mixes if lo <= r["frontend_snr"] < hi]
+            if rr:
+                d = lambda m: np.mean([r["label_free_rate_matched"][m]["recall"] - r["label_free_rate_matched"]["tc_dead"]["recall"] for r in rr])
+                out += f"| {lo:g}–{hi:g} | {len(rr)} | {d('mlp8'):+.3f} | {d('lin32'):+.3f} | {d('tmpl'):+.3f} |\n"
+    bx = [r["c_bitexact"] for r in real["results"] if r["target_snr"] is None]
+    out += (f"\nC pipeline bit-exact with Python on {sum(bx)}/{len(bx)} native real electrodes. "
+            f"Cells with no electrode ≥ {real['min_frontend_snr']:g}σ (excluded): {len(real['cells_without_electrode'])} "
+            f"({', '.join(c['recording'] for c in real['cells_without_electrode']) or 'none'}). "
+            f"Shortlisted electrodes dropped because the full recording was < {real['min_frontend_snr']:g}σ: {len(real['excluded_electrodes'])}. "
+            f"Mixes dropped (SNR not below native): {len(real['excluded_mixes'])}.\n")
     return out
 
 
 def fig_real():
     if real is None:
         return
+    pc = real["cells"]["per_cell"]
+    cells = sorted(pc, key=lambda c: (pc[c]["dataset"], pc[c]["label_free_mlp8"]))
+    fig, axs = plt.subplots(1, 2, figsize=(10, 4.2), gridspec_kw=dict(width_ratios=[1.25, 1]))
+    ax = axs[0]
+    for j, (m, c, mk, lab) in enumerate([("mlp8", "#59a14f", "^", "MLP-8 int8"), ("lin32", "#f28e2b", "s", "logistic int8"),
+                                         ("tmpl", "#4e79a7", "o", "matched filter int8")]):
+        ax.scatter(np.arange(len(cells)) + (j - 1) * 0.22, [pc[c][f"label_free_{m}"] for c in cells], color=c, marker=mk, s=22, label=lab)
+    ax.axhline(0, color="#999", lw=0.8)
+    for i, c in enumerate(cells):
+        if i and pc[c]["dataset"] != pc[cells[i - 1]]["dataset"]:
+            ax.axvline(i - 0.5, color="#ccc", lw=0.8, ls="--")
+    ax.set_xticks(range(len(cells))); ax.set_xticklabels([c.replace("cortex/", "") for c in cells], rotation=75, fontsize=5.5)
+    ax.set_ylabel("Δ GT recall vs tuned threshold\n(label-free, same event budget)")
+    ax.set_title("Per cell, native electrodes (dashed line separates cortex | retina)", fontsize=9)
+    ax.legend(fontsize=7, frameon=False)
+    ax = axs[1]
     rr = real["results"]
-    fig, ax = plt.subplots(figsize=(6.2, 3.8))
-    for key, c, mk, lab in [("threshold", "#444", "o", "threshold (k × {1, 2} ms dead, envelope)"),
-                            ("lin32", "#f28e2b", "s", "gated logistic regression int8"),
-                            ("mlp8", "#59a14f", "^", "gated MLP-8 int8")]:
-        pts = sorted((r["frontend_snr"], r["oracle_recall_at_matched_rate"][key]) for r in rr
-                     if r["oracle_recall_at_matched_rate"][key] is not None)
-        ax.scatter(*zip(*pts), color=c, marker=mk, s=24, label=lab, alpha=0.85)
-    ax.set_xlabel("measured front-end SNR of the labelled cell (trough / σ)")
-    ax.set_ylabel("GT recall at matched event rate")
-    ax.set_title("Real paired ground truth (Yger 2018, 3 retinal cells), frozen models", fontsize=9.5)
-    ax.legend(fontsize=7.5, frameon=False, loc="lower right"); ax.set_ylim(0, 1.02)
+    for key, c, mk, lab in [("tc_dead", "#444", "o", "tuned threshold"), ("lin32", "#f28e2b", "s", "logistic int8"), ("mlp8", "#59a14f", "^", "MLP-8 int8")]:
+        ax.scatter([r["frontend_snr"] for r in rr], [r["label_free_rate_matched"][key]["recall"] for r in rr], color=c, marker=mk, s=12, alpha=0.7, label=lab)
+    ax.set_xlabel("measured front-end SNR (native + real-signal mixes)"); ax.set_ylabel("GT recall (label-free)")
+    ax.set_title("All electrodes and mixes", fontsize=9); ax.set_ylim(0, 1.02); ax.legend(fontsize=7, frameon=False, loc="lower right")
+    fig.suptitle("Real paired ground truth, frozen int8 models (Yger 2018 retina + Marques-Smith 2018 cortex)", fontsize=9.5)
     fig.tight_layout(); fig.savefig(FIG / "real_recall_matched_rate.png"); plt.close(fig)
 
 

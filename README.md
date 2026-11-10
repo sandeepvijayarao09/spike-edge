@@ -10,18 +10,23 @@ paired ground truth.
 
 ## TL;DR
 
-* **Real paired ground truth (frozen, never tuned on it).** On 3 retinal ganglion cells from
-  [Yger et al. 2018](https://elifesciences.org/articles/34518), the gated int8 MLP-8 is compared with
-  the threshold envelope (best of every k and 1 or 2 ms dead time) at the same event rate. It recovers
-  more ground-truth spikes on **all 3 cells**, with mean Δrecall per cell of **+0.05, +0.14 and +0.03**.
-  The gain sits at SNR 3–5. At native SNR ≥ 7.8 everything ties at about 0.99. A label-free rule sets the
-  threshold to match the threshold detector's event count on the unlabelled calibration segment; it lands
-  within 0.005 recall of the oracle on average. Precision cannot be measured, because only one cell per
-  recording is labelled.
+* **Real paired ground truth: 20 cells, frozen models, never tuned on them.** The set is 19 retinal
+  ganglion cells ([Yger et al. 2018](https://elifesciences.org/articles/34518), all recordings) and 1 cortical
+  cell ([Marques-Smith et al. 2018](https://www.biorxiv.org/content/10.1101/370080v2)), over 77 electrodes.
+  * *Deployable comparison.* A label-free rule sets the classifier to the tuned threshold's event count on
+    the unlabelled calibration segment, then compares at that event budget. Gated int8 MLP-8 recovers more
+    ground-truth spikes on **16/20 cells (2 ties, 2 losses)**, mean Δrecall **+0.025 [95% CI over cells
+    +0.013, +0.038]**, sign test p = 0.001.
+  * *Oracle comparison.* Against the best threshold for each electrode (k and dead time picked with labels
+    at the same event rate), the gain shrinks to **+0.008 [−0.001, +0.017]** (7/11/2, p = 0.18). Most of
+    the deployable win is robustness to a threshold that cannot be re-tuned without labels; little of it
+    is detection that no threshold could match.
+  * *Low SNR.* The gain grows as SNR falls: real-signal mixes below SNR 3.5 average +0.11.
+  * *Caveat.* Precision cannot be measured: only one cell per recording is labelled.
 * **It is mostly a learned matched filter, but the nonlinearity buys robustness.** On synthetic data a
   32-MAC logistic regression and a fixed matched filter come within 0.01–0.04 F1 of MLP-8 (264 MACs).
-  CNNs up to 1760 MACs add nothing. On real cell 20170622, however, the logistic regression collapses
-  (Δrecall −0.13; recall 0.85 vs 0.998 at native SNR), while MLP-8 holds (+0.03). Because the classifier
+  CNNs up to 1760 MACs add nothing. On real cells, however, the logistic regression loses to the threshold
+  on 8/20 cells (mean −0.017 [−0.047, +0.011]; worst −0.185). MLP-8 does not. Because the classifier
   runs on only about 49 candidates/s, MLP-8 costs **13 kMAC/s per channel**. For 1024 channels that is
   325 Mops/s in total, 307 of them the shift-add front-end. State is 136 KiB of SRAM, plus 364 B of
   shared weights.
@@ -66,18 +71,37 @@ raw int16 @ 20 kHz ──► integer band-pass (~200 Hz–2.3 kHz, 13 add/sub/sh
 
 ### 0. Real paired ground truth (frozen models)
 
-The data is [Yger et al. 2018](https://elifesciences.org/articles/34518) ([Zenodo 1205233](https://zenodo.org/records/1205233),
-CC-BY-4.0): mouse retina on a 252-electrode MEA at 20 kHz, with loose-patch spike times of one ganglion
-cell per recording. Each electrode where that cell's spike-triggered trough is ≥ 4σ is treated as an
-independent implant channel, rescaled to σ = 5 counts and clipped to 10 bits.
+Two paired datasets are used. One cell per recording is labelled, and a cell is the unit of analysis.
+
+* **Retina.** [Yger et al. 2018](https://elifesciences.org/articles/34518)
+  ([Zenodo 1205233](https://zenodo.org/records/1205233), CC-BY-4.0): mouse retina in vitro on a
+  252-electrode MEA at 20 kHz, with loose-patch spike times. All 19 recordings are used (≈31 GB,
+  `scripts/fetch_yger.py`).
+* **Cortex.** [Marques-Smith et al. 2018](https://www.biorxiv.org/content/10.1101/370080v2) (Google Drive,
+  CC BY-SA 4.0): rat cortex in vivo on Neuropixels at 30 kHz, with juxtacellular spike times.
+  * Of the 43 cells, I selected the 10 with a juxtacellular-triggered peak-to-peak ≥ 50 µV; the others are
+    too faint for one channel.
+  * Three of them (c14, c21, c26) are over 20 GB each and were skipped.
+  * Four (c27, c28, c45, c46) were blocked by Google Drive's "Quota exceeded" limit on every attempt over
+    six days; I did not work around the limit.
+  * Of the three fetched (c19, c24, c37), only c37 has an electrode at ≥ 4σ after the front-end. **So cortex
+    is n = 1.**
+  * `scripts/fetch_marques_smith.py` streams each 384-channel file and keeps the 64 channels around the
+    cell. The data is high-passed at 100 Hz (to match the Yger preprocessing) and resampled to 20 kHz.
+
+Every electrode where the cell's front-end spike-triggered trough is ≥ 4σ on the full recording is an
+independent implant channel. It is rescaled to σ = 5 counts and clipped to 10 bits.
 
 * **Precision is unmeasurable.** Unmatched events may be spikes from other cells. So every detector is
   compared on ground-truth recall at the same event rate.
 * **Oracle matched rate.** Each detector's threshold is swept. The threshold curve is the envelope over
   k and both 1 ms and 2 ms dead time. Recall is read at the frozen tuned-threshold event rate. This
   needs labels or a known firing rate.
-* **Label-free rate-matched.** The logit threshold is set so that the classifier emits as many events on
-  the unlabelled calibration segment as the tuned threshold does. This is deployable.
+* **Label-free rate-matched (primary).** The logit threshold is set so that the classifier emits as many
+  events on the unlabelled calibration segment as the tuned threshold does. This is deployable. Realised
+  event rates then stay within 0.94–1.08× of the threshold's (last column of the per-cell table).
+* **Aggregation.** Each cell's Δrecall is the mean over its native electrodes. Cells are counted as
+  wins/ties/losses (±0.01), with a bootstrap CI over cells and a two-sided sign test.
 * **SNR sweep.** Rows other than "native" attenuate the electrode by a factor a and add real noise from
   a **different recording**. The first version used same-recording donors, whose noise is
   anti-correlated with the electrode (ρ ≈ −0.65, shared reference). Mixing then cancelled noise and
@@ -86,37 +110,52 @@ independent implant channel, rescaled to σ = 5 counts and clipped to 10 bits.
 * **SNR convention.** SNR is trough / σ, with peak-to-peak / σ in parentheses.
 
 <!-- BEGIN real -->
-| Cell / electrode | condition | SNR (ptp) | GT Hz | frozen: threshold tuned | frozen: logistic int8 | frozen: MLP-8 int8 | label-free rate-matched MLP-8 | oracle @ matched rate (ev/s): threshold envelope vs MLP-8 | … vs logistic |
-|---|---|---|---:|---|---|---|---|---|---|
-| 20160426/patch_2 / e232 | native | 4.7 (8.0) | 4.4 | 0.947 @ 5/s | 0.986 @ 4/s | 0.994 @ 4/s | 0.994 @ 5/s | (5) 0.948 vs **0.994** | 0.948 vs **0.994** |
-| 20160426/patch_2 / e232 | ×0.84 + 20170622/patch1/e141 (ρ=-0.00) | 4.0 (6.7) | 4.4 | 0.761 @ 4/s | 0.856 @ 4/s | 0.885 @ 4/s | 0.913 @ 5/s | (4) 0.761 vs **0.913** | 0.761 vs **0.903** |
-| 20160426/patch_2 / e232 | ×0.63 + 20170622/patch1/e239 (ρ=-0.00) | 3.0 (5.0) | 4.4 | 0.329 @ 9/s | 0.440 @ 5/s | 0.464 @ 6/s | 0.567 @ 9/s | (9) 0.329 vs **0.558** | 0.329 vs **0.585** |
-| 20160426/patch_3 / e130 | native | 7.8 (12.6) | 9.4 | 0.994 @ 14/s | 0.990 @ 13/s | 1.000 @ 13/s | 1.000 @ 14/s | (14) 1.000 vs 1.000 | 1.000 vs 0.995 |
-| 20160426/patch_3 / e130 | ×0.77 + 20160426/patch_2/e134 (ρ=-0.02) | 6.0 (9.7) | 9.4 | 0.993 @ 13/s | 0.959 @ 11/s | 0.999 @ 12/s | 1.000 @ 12/s | (13) 0.994 vs 1.000 | 0.994 vs 0.992 |
-| 20160426/patch_3 / e130 | ×0.64 + 20160426/patch_2/e133 (ρ=+0.04) | 5.0 (8.2) | 9.4 | 0.962 @ 18/s | 0.860 @ 15/s | 0.984 @ 17/s | 0.976 @ 16/s | (18) 0.962 vs **0.989** | **0.962** vs 0.947 |
-| 20160426/patch_3 / e130 | ×0.51 + 20160426/patch_2/e169 (ρ=+0.03) | 4.0 (6.5) | 9.4 | 0.825 @ 10/s | 0.710 @ 8/s | 0.902 @ 9/s | 0.937 @ 10/s | (10) 0.825 vs **0.923** | 0.825 vs 0.827 |
-| 20160426/patch_3 / e130 | ×0.39 + 20160426/patch_2/e130 (ρ=+0.07) | 3.0 (4.9) | 9.4 | 0.421 @ 14/s | 0.334 @ 10/s | 0.410 @ 13/s | 0.504 @ 16/s | (14) 0.420 vs **0.451** | 0.420 vs **0.449** |
-| 20160426/patch_3 / e228 | native | 8.5 (14.8) | 9.4 | 0.979 @ 22/s | 0.984 @ 19/s | 0.996 @ 20/s | 0.996 @ 22/s | (22) 0.996 vs 0.996 | 0.996 vs 0.989 |
-| 20160426/patch_3 / e228 | ×0.71 + 20160426/patch_2/e134 (ρ=+0.05) | 5.3 (9.3) | 9.4 | 0.974 @ 15/s | 0.975 @ 15/s | 0.992 @ 15/s | 0.992 @ 16/s | (15) 0.983 vs 0.990 | 0.983 vs 0.975 |
-| 20160426/patch_3 / e228 | ×0.59 + 20160426/patch_2/e133 (ρ=+0.04) | 4.5 (7.8) | 9.4 | 0.911 @ 17/s | 0.942 @ 19/s | 0.977 @ 20/s | 0.965 @ 18/s | (17) 0.910 vs **0.956** | 0.910 vs 0.914 |
-| 20160426/patch_3 / e228 | ×0.47 + 20160426/patch_2/e169 (ρ=-0.04) | 4.0 (7.0) | 9.4 | 0.849 @ 15/s | 0.897 @ 13/s | 0.956 @ 15/s | 0.960 @ 16/s | (15) 0.849 vs **0.958** | 0.849 vs **0.931** |
-| 20160426/patch_3 / e228 | ×0.35 + 20160426/patch_2/e130 (ρ=-0.03) | 3.0 (5.3) | 9.4 | 0.443 @ 18/s | 0.572 @ 15/s | 0.616 @ 19/s | 0.620 @ 20/s | (18) 0.443 vs **0.587** | 0.443 vs **0.621** |
-| 20170622/patch1 / e146 | native | 3.2 (6.1) | 15.1 | 0.443 @ 14/s | 0.437 @ 12/s | 0.663 @ 18/s | 0.593 @ 14/s | (14) 0.443 vs **0.575** | 0.443 vs **0.464** |
-| 20170622/patch1 / e178 | native | 8.6 (13.8) | 15.1 | 0.982 @ 33/s | 0.849 @ 27/s | 0.998 @ 38/s | 0.997 @ 31/s | (33) 0.999 vs 0.997 | **0.999** vs 0.896 |
-| 20170622/patch1 / e178 | ×0.70 + 20160426/patch_3/e225 (ρ=-0.00) | 6.0 (9.7) | 15.1 | 0.987 @ 22/s | 0.629 @ 13/s | 0.985 @ 20/s | 0.989 @ 22/s | (22) 0.993 vs 0.989 | **0.993** vs 0.801 |
-| 20170622/patch1 / e178 | ×0.58 + 20160426/patch_3/e229 (ρ=+0.01) | 5.0 (8.1) | 15.1 | 0.972 @ 19/s | 0.492 @ 9/s | 0.940 @ 16/s | 0.972 @ 19/s | (19) 0.972 vs 0.972 | **0.972** vs 0.767 |
-| 20170622/patch1 / e178 | ×0.46 + 20160426/patch_3/e157 (ρ=-0.01) | 4.1 (6.6) | 15.1 | 0.816 @ 19/s | 0.344 @ 8/s | 0.727 @ 14/s | 0.812 @ 17/s | (19) 0.816 vs **0.827** | **0.816** vs 0.558 |
-| 20170622/patch1 / e178 | ×0.35 + 20160426/patch_3/e226 (ρ=+0.01) | 3.1 (4.9) | 15.1 | 0.483 @ 8/s | 0.140 @ 2/s | 0.300 @ 5/s | 0.478 @ 8/s | (8) 0.483 vs **0.503** | **0.483** vs 0.416 |
+**Across cells** (one sample per cell = mean over its native ≥4σ electrodes). Entries are mean Δrecall vs the tuned threshold [95% bootstrap CI over cells] · wins/ties/losses (±0.01) · two-sided sign test p.
 
-**Per cell** (mean [min, max] Δrecall vs the threshold envelope at matched rate, over that cell's conditions):
+| Scope | cells | comparison | MLP-8 | CNN-8 | logistic | matched filter |
+|---|---:|---|---|---|---|---|
+| all | 20 | label-free rate-matched (primary) | +0.025 [+0.013, +0.038] · 16/2/2 · p=0.00131 | +0.025 [+0.013, +0.039] · 16/3/1 · p=0.000275 | -0.017 [-0.047, +0.011] · 10/2/8 · p=0.815 | +0.014 [-0.003, +0.029] · 14/3/3 · p=0.0127 |
+| all | 20 | oracle matched rate | +0.008 [-0.001, +0.017] · 7/11/2 · p=0.18 | +0.008 [-0.002, +0.018] · 7/11/2 · p=0.18 | -0.033 [-0.061, -0.008] · 4/6/10 · p=0.18 | -0.004 [-0.019, +0.009] · 6/10/4 · p=0.754 |
+| Marques-Smith 2018 (rat cortex, Neuropixels) | 1 | label-free rate-matched (primary) | +0.076 [+0.076, +0.076] · 1/0/0 · p=1 | +0.082 [+0.082, +0.082] · 1/0/0 · p=1 | +0.029 [+0.029, +0.029] · 1/0/0 · p=1 | +0.051 [+0.051, +0.051] · 1/0/0 · p=1 |
+| Marques-Smith 2018 (rat cortex, Neuropixels) | 1 | oracle matched rate | +0.055 [+0.055, +0.055] · 1/0/0 · p=1 | +0.064 [+0.064, +0.064] · 1/0/0 · p=1 | +0.015 [+0.015, +0.015] · 1/0/0 · p=1 | +0.037 [+0.037, +0.037] · 1/0/0 · p=1 |
+| Yger 2018 (mouse retina, MEA) | 19 | label-free rate-matched (primary) | +0.023 [+0.011, +0.036] · 15/2/2 · p=0.00235 | +0.022 [+0.011, +0.035] · 15/3/1 · p=0.000519 | -0.019 [-0.051, +0.010] · 9/2/8 · p=1 | +0.012 [-0.006, +0.028] · 13/3/3 · p=0.0213 |
+| Yger 2018 (mouse retina, MEA) | 19 | oracle matched rate | +0.006 [-0.002, +0.014] · 6/11/2 · p=0.289 | +0.005 [-0.004, +0.013] · 6/11/2 · p=0.289 | -0.036 [-0.065, -0.010] · 3/6/10 · p=0.0923 | -0.006 [-0.021, +0.007] · 5/10/4 · p=1 |
 
-| Cell | conditions | MLP-8 | logistic | matched filter | CNN-8 |
-|---|---:|---|---|---|---|
-| 20160426/patch_3 | 10 | +0.047 [-0.001, +0.144] | +0.026 [-0.014, +0.178] | +0.039 [-0.001, +0.173] | +0.048 [-0.001, +0.151] |
-| 20160426/patch_2 | 3 | +0.142 [+0.046, +0.229] | +0.148 [+0.046, +0.255] | +0.144 [+0.046, +0.236] | +0.148 [+0.046, +0.248] |
-| 20170622/patch1 | 6 | +0.026 [-0.005, +0.132] | -0.134 [-0.258, +0.021] | -0.030 [-0.114, +0.066] | +0.015 [-0.017, +0.126] |
+**Per cell** (label-free Δrecall vs tuned threshold, native electrodes):
 
-C pipeline bit-exact with Python on the native real electrodes: 5/5. Mixes dropped because the measured SNR was not below native: 0.
+| Cell | dataset | electrodes | SNR range | threshold recall | Δ MLP-8 | Δ CNN-8 | Δ logistic | Δ matched filter | MLP/threshold event-rate ratio |
+|---|---|---:|---|---:|---:|---:|---:|---:|---:|
+| cortex/c37 | Marques-Smith 2018 | 4 | 4.5–7.4 | 0.852 | +0.076 | +0.082 | +0.029 | +0.051 | 1.08 |
+| 20160415/patch_2_MEA | Yger 2018 | 3 | 4.5–7.7 | 0.903 | +0.037 | +0.029 | -0.088 | -0.008 | 1.02 |
+| 20160426/patch_2 | Yger 2018 | 1 | 4.7–4.7 | 0.947 | +0.047 | +0.047 | +0.047 | +0.047 | 1.01 |
+| 20160426/patch_3 | Yger 2018 | 2 | 7.8–8.5 | 0.987 | +0.011 | +0.011 | +0.006 | +0.011 | 1.00 |
+| 20170621/patch1_converted | Yger 2018 | 4 | 4.9–15.2 | 0.941 | +0.012 | +0.013 | -0.038 | -0.013 | 0.98 |
+| 20170622/patch1 | Yger 2018 | 1 | 8.6–8.6 | 0.982 | +0.015 | +0.015 | -0.101 | +0.011 | 0.97 |
+| 20170622/patch2 | Yger 2018 | 7 | 5.9–19.6 | 0.947 | +0.040 | +0.040 | +0.033 | +0.037 | 1.01 |
+| 20170623/patch1 | Yger 2018 | 10 | 4.2–35.7 | 0.970 | +0.021 | +0.021 | +0.019 | +0.019 | 1.03 |
+| 20170627/patch1 | Yger 2018 | 2 | 4.3–6.9 | 0.962 | +0.018 | +0.018 | -0.036 | +0.013 | 0.99 |
+| 20170629/patch2 | Yger 2018 | 10 | 4.1–24.3 | 0.972 | +0.003 | +0.005 | -0.018 | -0.005 | 1.01 |
+| 20170629/patch3 | Yger 2018 | 4 | 4.1–11.6 | 0.954 | -0.044 | -0.045 | -0.185 | -0.091 | 0.99 |
+| 20170630/patch1 | Yger 2018 | 4 | 5.5–14.7 | 0.991 | +0.006 | +0.006 | -0.043 | +0.004 | 0.96 |
+| 20170706/patch1 | Yger 2018 | 1 | 17.9–17.9 | 0.972 | +0.027 | +0.027 | +0.007 | +0.025 | 1.02 |
+| 20170706/patch2 | Yger 2018 | 1 | 10.2–10.2 | 0.926 | +0.018 | +0.018 | +0.015 | +0.016 | 0.94 |
+| 20170706/patch3 | Yger 2018 | 3 | 4.4–11.5 | 0.835 | +0.100 | +0.101 | +0.090 | +0.094 | 0.98 |
+| 20170713/patch1 | Yger 2018 | 3 | 4.0–14.0 | 0.895 | +0.034 | +0.033 | +0.019 | +0.033 | 1.02 |
+| 20170725/patch1 | Yger 2018 | 6 | 4.9–23.3 | 0.902 | +0.036 | +0.033 | +0.011 | +0.028 | 1.01 |
+| 20170726/patch1 | Yger 2018 | 3 | 5.7–16.6 | 0.992 | -0.015 | -0.009 | -0.150 | -0.059 | 0.99 |
+| 20170728/patch2 | Yger 2018 | 4 | 4.9–19.2 | 0.944 | +0.041 | +0.041 | +0.034 | +0.039 | 0.99 |
+| 20170803/patch1 | Yger 2018 | 4 | 6.5–12.6 | 0.975 | +0.022 | +0.022 | +0.020 | +0.021 | 0.99 |
+
+**Real-signal SNR sweep** (attenuated electrode + cross-recording noise; rows reuse the same cells, so not independent):
+
+| measured SNR | conditions | mean label-free Δ MLP-8 | mean Δ logistic | mean Δ matched filter |
+|---|---:|---:|---:|---:|
+| 0–3.5 | 77 | +0.106 | +0.079 | +0.083 |
+| 3.5–4.5 | 80 | +0.072 | +0.003 | +0.038 |
+| 4.5–5.5 | 61 | +0.030 | -0.029 | +0.008 |
+| 5.5–99 | 40 | +0.012 | -0.019 | +0.005 |
+
+C pipeline bit-exact with Python on 77/77 native real electrodes. Cells with no electrode ≥ 4σ (excluded): 2 (cortex/c19, cortex/c24). Shortlisted electrodes dropped because the full recording was < 4σ: 7. Mixes dropped (SNR not below native): 0.
 <!-- END real -->
 
 ### 1. Synthetic detection: detector × F1 × ops × memory
@@ -293,12 +332,19 @@ Secondary, Cortex-M4 **estimate** (cycles only; MCU power depends on the part, s
 
 ## Limitations
 
-* **The real-data test is small and not cortex.** It covers 3 mouse retinal cells in vitro on a planar
-  MEA, already high-passed at 100 Hz. Precision is unmeasured, and the SNR-sweep rows reuse the same
-  cells, so conditions are not independent: count cells, not rows.
-  20160426_patch2 ships without `triggers.npy`. I rebuilt it with the authors' stated rule (−k·MAD peaks
-  on the patch trace), which reproduces the official triggers exactly on the other two recordings
-  (1691/1691 and 4541/4541).
+* **Real data is mostly retina, and cortex is n = 1.**
+  * 19 of the 20 cells are mouse retinal ganglion cells in vitro on a planar MEA, a different tissue,
+    electrode and noise regime from a chronic cortical implant.
+  * Only one cortical cell (c37) reached the 4σ inclusion bar. Four candidate cortical cells could not be
+    downloaded (Google Drive quota), and two were too faint.
+  * Precision is unmeasured. The SNR-sweep rows reuse the same cells, so they are not independent:
+    count cells, not rows.
+  * 20160426_patch2 ships without `triggers.npy`. I rebuilt it with the authors' stated rule (−k·MAD peaks
+    on the patch trace), which reproduces the official triggers exactly on two other recordings
+    (1691/1691 and 4541/4541).
+* **The deployable gain is mostly versus a fixed threshold.** Against an oracle-tuned threshold per
+  electrode, the MLP's advantage is +0.008 and not significant (§0). On real data the value is that the
+  learned gate keeps working at a frozen, label-free operating point.
 * **Matched-rate comparisons need a rate target.** The oracle version reads recall at a known event
   rate. The label-free version matches the threshold detector's count on the calibration segment, which
   assumes that count is a sensible budget.
@@ -322,7 +368,7 @@ Secondary, Cortex-M4 **estimate** (cycles only; MCU power depends on the part, s
 ```bash
 uv venv -p 3.12 .venv && uv pip install -p .venv -r requirements-lock.txt && uv pip install -p .venv --no-deps -e .
 make all     # detection (~10 min) → reduction (~4 min) → embedded → report; all seeds fixed
-make real    # downloads ~4.7 GB of Yger et al. 2018 (CC-BY-4.0) into data/, evaluates the frozen models
+make real    # fetches all of Yger 2018 (~31 GB, MD5-checked) + Marques-Smith cortical cells (streamed) into data/, then evaluates
 make test    # unit tests + C-vs-Python bit-exactness against the committed headers (no torch)
 ```
 
@@ -342,15 +388,16 @@ make test    # unit tests + C-vs-Python bit-exactness against the committed head
 | `c/spike_edge.[ch]` | C99 streaming implementation: no floats, no malloc, wrap-safe counters, 136 B state/channel |
 | `c/harness.c`, `c/bench.c` | bit-exact I/O harness (with `--start` for wrap tests), host latency bench |
 | `scripts/01–04` | synthetic experiments → `results/*.json` → figures + tables |
-| `scripts/05_real_data.py` | frozen models on Yger 2018 paired ground truth |
+| `scripts/fetch_yger.py`, `scripts/fetch_marques_smith.py` | resumable, verified fetchers for the two paired ground-truth datasets |
+| `scripts/05_real_data.py` | frozen models on all real paired ground truth, per-cell statistics |
 
 ## Next steps
 
 1. **Artifact negatives.** Add stimulation and saturation windows as negatives in training, then re-check
    the §1b artifact column. Retrain on real noise with injected templates, and check whether the linear
-   model's failure on cell 20170622 disappears.
-2. **More real cells, and cortex.** The remaining 16 Yger recordings are about 2 GB each, and
-   Marques-Smith et al. 2018 has Neuropixels + patch data. Both are large downloads to approve first.
+   model's failures (20170629/patch3, 20170726/patch1, 20170622/patch1) disappear.
+2. **More cortex.** Retry c27, c28, c45 and c46 when Google Drive's quota allows (`make real` resumes).
+   Then fetch c14, c21 and c26 (each > 20 GB) to grow the cortical sample beyond n = 1.
 3. **On hardware or QEMU.** Count cycles with DWT or `qemu-system-arm -icount`, measure current, and add a
    CMSIS-NN `arm_fully_connected_s8` path checked bit-exact.
 4. **Positive-first waveforms.** Add a two-sided gate and measure its cost in false events.

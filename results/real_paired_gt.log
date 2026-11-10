@@ -1,0 +1,361 @@
+20160415/patch_2_MEA: 300s, 3514 GT spikes, best fe-SNR [(69, 7.6), (33, 5.2), (99, 4.3), (30, 2.5)]
+20160426/patch_2: 202s, 879 GT spikes, best fe-SNR [(232, 4.7), (126, 4.3), (202, 3.8), (165, 3.6)]
+20160426/patch_3: 180s, 1691 GT spikes, best fe-SNR [(228, 8.4), (130, 7.9), (158, 1.8), (133, 1.7)]
+20170621/patch1_converted: 300s, 4998 GT spikes, best fe-SNR [(99, 13.3), (96, 6.2), (216, 5.9), (1, 4.2)]
+20170622/patch1: 300s, 4541 GT spikes, best fe-SNR [(178, 8.5), (146, 3.2), (177, 2.4), (212, 2.2)]
+20170622/patch2: 300s, 2693 GT spikes, best fe-SNR [(92, 19.3), (122, 9.2), (252, 7.6), (156, 7.2)]
+20170623/patch1: 300s, 737 GT spikes, best fe-SNR [(139, 36.4), (234, 12.7), (237, 11.5), (167, 10.0)]
+20170627/patch1: 300s, 7789 GT spikes, best fe-SNR [(223, 9.7), (157, 7.2), (192, 5.1), (193, 4.7)]
+20170629/patch2: 300s, 2019 GT spikes, best fe-SNR [(66, 25.7), (30, 16.1), (96, 10.6), (31, 10.4)]
+20170629/patch3: 300s, 3834 GT spikes, best fe-SNR [(187, 13.6), (175, 7.5), (151, 6.0), (188, 4.7)]
+20170630/patch1: 300s, 2384 GT spikes, best fe-SNR [(234, 14.3), (136, 7.4), (173, 7.2), (139, 5.5)]
+20170706/patch1: 300s, 3174 GT spikes, best fe-SNR [(140, 15.0), (170, 2.6), (240, 2.0), (239, 1.6)]
+20170706/patch2: 300s, 6532 GT spikes, best fe-SNR [(43, 9.1), (79, 3.6), (78, 3.5), (109, 2.5)]
+20170706/patch3: 300s, 634 GT spikes, best fe-SNR [(102, 11.0), (75, 5.1), (7, 4.1), (105, 3.9)]
+20170713/patch1: 300s, 6557 GT spikes, best fe-SNR [(209, 13.3), (239, 6.3), (208, 4.0), (238, 3.2)]
+20170725/patch1: 300s, 382 GT spikes, best fe-SNR [(131, 23.9), (161, 8.9), (229, 6.7), (134, 6.3)]
+20170726/patch1: 300s, 2413 GT spikes, best fe-SNR [(30, 17.4), (3, 7.5), (2, 5.8), (126, 4.6)]
+20170728/patch2: 300s, 4748 GT spikes, best fe-SNR [(118, 20.0), (88, 10.3), (52, 6.0), (20, 4.9)]
+20170803/patch1: 300s, 7639 GT spikes, best fe-SNR [(99, 12.7), (69, 9.9), (216, 8.9), (96, 6.4)]
+cortex/c19: 810s, 5724 GT spikes, best fe-SNR [(34, 0.8), (32, 0.8), (33, 0.7), (36, 0.7)]
+cortex/c24: 810s, 2378 GT spikes, best fe-SNR [(32, 2.8), (36, 2.5), (34, 2.2), (28, 2.2)]
+cortex/c37: 135s, 601 GT spikes, best fe-SNR [(32, 7.7), (30, 5.4), (34, 5.2), (36, 4.5)]
+  20160415/patch_2_MEA e69 native: SNR 7.7 n_gt 3414 | label-free @~26/s: TC 0.971 MLP 0.991 LIN 0.917 MF 0.978
+  20160415/patch_2_MEA e69 mix 6.0: SNR 6.0 n_gt 3414 | label-free @~22/s: TC 0.964 MLP 0.988 LIN 0.893 MF 0.963
+  20160415/patch_2_MEA e69 mix 5.0: SNR 5.0 n_gt 3414 | label-free @~19/s: TC 0.929 MLP 0.955 LIN 0.819 MF 0.906
+  20160415/patch_2_MEA e69 mix 4.0: SNR 4.0 n_gt 3414 | label-free @~16/s: TC 0.792 MLP 0.844 LIN 0.680 MF 0.788
+  20160415/patch_2_MEA e69 mix 3.0: SNR 3.1 n_gt 3414 | label-free @~9/s: TC 0.526 MLP 0.645 LIN 0.545 MF 0.581
+  20160415/patch_2_MEA e33 native: SNR 5.1 n_gt 3414 | label-free @~24/s: TC 0.920 MLP 0.937 LIN 0.771 MF 0.858
+  20160415/patch_2_MEA e33 mix 4.0: SNR 4.0 n_gt 3414 | label-free @~18/s: TC 0.774 MLP 0.841 LIN 0.668 MF 0.728
+  20160415/patch_2_MEA e33 mix 3.0: SNR 3.0 n_gt 3414 | label-free @~10/s: TC 0.488 MLP 0.622 LIN 0.529 MF 0.560
+  20160415/patch_2_MEA e99 native: SNR 4.5 n_gt 3414 | label-free @~30/s: TC 0.818 MLP 0.891 LIN 0.756 MF 0.850
+  20160415/patch_2_MEA e99 mix 4.0: SNR 3.6 n_gt 3414 | label-free @~17/s: TC 0.599 MLP 0.707 LIN 0.571 MF 0.660
+  20160415/patch_2_MEA e99 mix 3.0: SNR 2.7 n_gt 3414 | label-free @~9/s: TC 0.321 MLP 0.373 LIN 0.306 MF 0.378
+  20160426/patch_2 e232 native: SNR 4.7 n_gt 838 | label-free @~5/s: TC 0.947 MLP 0.994 LIN 0.994 MF 0.994
+  20160426/patch_2 e232 mix 4.0: SNR 4.0 n_gt 838 | label-free @~8/s: TC 0.776 MLP 0.901 LIN 0.860 MF 0.876
+  20160426/patch_2 e232 mix 3.0: SNR 3.0 n_gt 838 | label-free @~10/s: TC 0.344 MLP 0.545 LIN 0.554 MF 0.539
+  20160426/patch_3 e228 native: SNR 8.5 n_gt 1598 | label-free @~22/s: TC 0.979 MLP 0.996 LIN 0.989 MF 0.996
+  20160426/patch_3 e228 mix 6.0: SNR 6.0 n_gt 1598 | label-free @~23/s: TC 0.976 MLP 0.991 LIN 0.981 MF 0.988
+  20160426/patch_3 e228 mix 5.0: SNR 4.5 n_gt 1598 | label-free @~18/s: TC 0.854 MLP 0.917 LIN 0.904 MF 0.912
+  20160426/patch_3 e228 mix 4.0: SNR 3.6 n_gt 1598 | label-free @~16/s: TC 0.542 MLP 0.702 LIN 0.738 MF 0.727
+  20160426/patch_3 e228 mix 3.0: SNR 2.6 n_gt 1598 | label-free @~11/s: TC 0.190 MLP 0.239 LIN 0.286 MF 0.254
+  20160426/patch_3 e130 native: SNR 7.8 n_gt 1598 | label-free @~14/s: TC 0.994 MLP 1.000 LIN 0.995 MF 0.999
+  20160426/patch_3 e130 mix 6.0: SNR 6.0 n_gt 1598 | label-free @~17/s: TC 0.988 MLP 0.996 LIN 0.979 MF 0.990
+  20160426/patch_3 e130 mix 5.0: SNR 5.0 n_gt 1598 | label-free @~17/s: TC 0.933 MLP 0.972 LIN 0.921 MF 0.951
+  20160426/patch_3 e130 mix 4.0: SNR 4.1 n_gt 1598 | label-free @~20/s: TC 0.745 MLP 0.797 LIN 0.742 MF 0.775
+  20160426/patch_3 e130 mix 3.0: SNR 3.0 n_gt 1598 | label-free @~14/s: TC 0.325 MLP 0.393 LIN 0.390 MF 0.389
+  20170621/patch1_converted e99 native: SNR 15.2 n_gt 4832 | label-free @~74/s: TC 0.981 MLP 0.999 LIN 0.998 MF 0.998
+  20170621/patch1_converted e99 mix 6.0: SNR 6.0 n_gt 4832 | label-free @~36/s: TC 0.974 MLP 0.975 LIN 0.875 MF 0.947
+  20170621/patch1_converted e99 mix 5.0: SNR 5.0 n_gt 4832 | label-free @~29/s: TC 0.894 MLP 0.895 LIN 0.751 MF 0.842
+  20170621/patch1_converted e99 mix 4.0: SNR 4.0 n_gt 4832 | label-free @~26/s: TC 0.671 MLP 0.615 LIN 0.514 MF 0.565
+  20170621/patch1_converted e99 mix 3.0: SNR 3.0 n_gt 4832 | label-free @~16/s: TC 0.306 MLP 0.344 LIN 0.319 MF 0.300
+  20170621/patch1_converted e96 native: SNR 7.0 n_gt 4832 | label-free @~69/s: TC 0.957 MLP 0.987 LIN 0.983 MF 0.983
+  20170621/patch1_converted e96 mix 6.0: SNR 6.0 n_gt 4832 | label-free @~63/s: TC 0.953 MLP 0.981 LIN 0.972 MF 0.976
+  20170621/patch1_converted e96 mix 5.0: SNR 4.5 n_gt 4832 | label-free @~48/s: TC 0.814 MLP 0.914 LIN 0.875 MF 0.891
+  20170621/patch1_converted e96 mix 4.0: SNR 3.6 n_gt 4832 | label-free @~40/s: TC 0.509 MLP 0.673 LIN 0.645 MF 0.634
+  20170621/patch1_converted e96 mix 3.0: SNR 2.7 n_gt 4832 | label-free @~32/s: TC 0.186 MLP 0.245 LIN 0.309 MF 0.246
+  20170621/patch1_converted e216 native: SNR 6.5 n_gt 4832 | label-free @~67/s: TC 0.981 MLP 0.994 LIN 0.992 MF 0.994
+  20170621/patch1_converted e216 mix 6.0: SNR 6.0 n_gt 4832 | label-free @~62/s: TC 0.975 MLP 0.994 LIN 0.989 MF 0.993
+  20170621/patch1_converted e216 mix 5.0: SNR 5.0 n_gt 4832 | label-free @~52/s: TC 0.920 MLP 0.973 LIN 0.957 MF 0.965
+  20170621/patch1_converted e216 mix 4.0: SNR 4.0 n_gt 4832 | label-free @~38/s: TC 0.702 MLP 0.838 LIN 0.816 MF 0.813
+  20170621/patch1_converted e216 mix 3.0: SNR 3.0 n_gt 4832 | label-free @~22/s: TC 0.330 MLP 0.511 LIN 0.498 MF 0.481
+  20170621/patch1_converted e1 native: SNR 4.9 n_gt 4832 | label-free @~55/s: TC 0.847 MLP 0.836 LIN 0.641 MF 0.739
+  20170621/patch1_converted e1 mix 4.0: SNR 3.6 n_gt 4832 | label-free @~21/s: TC 0.511 MLP 0.395 LIN 0.270 MF 0.325
+  20170621/patch1_converted e1 mix 3.0: SNR 2.7 n_gt 4832 | label-free @~12/s: TC 0.206 MLP 0.166 LIN 0.121 MF 0.149
+  20170622/patch1 e178 native: SNR 8.6 n_gt 4385 | label-free @~33/s: TC 0.982 MLP 0.997 LIN 0.881 MF 0.993
+  20170622/patch1 e178 mix 6.0: SNR 6.0 n_gt 4385 | label-free @~24/s: TC 0.977 MLP 0.966 LIN 0.788 MF 0.917
+  20170622/patch1 e178 mix 5.0: SNR 5.0 n_gt 4385 | label-free @~22/s: TC 0.926 MLP 0.877 LIN 0.688 MF 0.805
+  20170622/patch1 e178 mix 4.0: SNR 4.0 n_gt 4385 | label-free @~22/s: TC 0.734 MLP 0.632 LIN 0.484 MF 0.584
+  20170622/patch1 e178 mix 3.0: SNR 3.0 n_gt 4385 | label-free @~15/s: TC 0.367 MLP 0.329 LIN 0.289 MF 0.295
+  20170622/patch2 e92 native: SNR 19.6 n_gt 2607 | label-free @~33/s: TC 0.923 MLP 0.993 LIN 0.993 MF 0.993
+  20170622/patch2 e92 mix 6.0: SNR 6.0 n_gt 2607 | label-free @~18/s: TC 0.974 MLP 0.989 LIN 0.987 MF 0.988
+  20170622/patch2 e92 mix 5.0: SNR 5.0 n_gt 2607 | label-free @~18/s: TC 0.923 MLP 0.973 LIN 0.968 MF 0.969
+  20170622/patch2 e92 mix 4.0: SNR 4.0 n_gt 2607 | label-free @~21/s: TC 0.667 MLP 0.798 LIN 0.840 MF 0.827
+  20170622/patch2 e92 mix 3.0: SNR 3.0 n_gt 2607 | label-free @~14/s: TC 0.289 MLP 0.432 LIN 0.474 MF 0.442
+  20170622/patch2 e122 native: SNR 9.2 n_gt 2607 | label-free @~31/s: TC 0.913 MLP 0.985 LIN 0.983 MF 0.984
+  20170622/patch2 e122 mix 6.0: SNR 6.0 n_gt 2607 | label-free @~25/s: TC 0.945 MLP 0.981 LIN 0.976 MF 0.980
+  20170622/patch2 e122 mix 5.0: SNR 5.0 n_gt 2607 | label-free @~22/s: TC 0.897 MLP 0.962 LIN 0.947 MF 0.956
+  20170622/patch2 e122 mix 4.0: SNR 4.0 n_gt 2607 | label-free @~21/s: TC 0.675 MLP 0.815 LIN 0.828 MF 0.831
+  20170622/patch2 e122 mix 3.0: SNR 3.0 n_gt 2607 | label-free @~14/s: TC 0.310 MLP 0.456 LIN 0.453 MF 0.461
+  20170622/patch2 e252 native: SNR 7.4 n_gt 2607 | label-free @~31/s: TC 0.984 MLP 0.996 LIN 0.995 MF 0.996
+  20170622/patch2 e252 mix 6.0: SNR 6.0 n_gt 2607 | label-free @~29/s: TC 0.978 MLP 0.989 LIN 0.975 MF 0.987
+  20170622/patch2 e252 mix 5.0: SNR 5.0 n_gt 2607 | label-free @~24/s: TC 0.936 MLP 0.936 LIN 0.904 MF 0.927
+  20170622/patch2 e252 mix 4.0: SNR 4.0 n_gt 2607 | label-free @~20/s: TC 0.694 MLP 0.700 LIN 0.748 MF 0.723
+  20170622/patch2 e252 mix 3.0: SNR 3.0 n_gt 2607 | label-free @~13/s: TC 0.307 MLP 0.395 LIN 0.444 MF 0.409
+  20170622/patch2 e156 native: SNR 7.0 n_gt 2607 | label-free @~34/s: TC 0.986 MLP 0.997 LIN 0.995 MF 0.995
+  20170622/patch2 e156 mix 6.0: SNR 6.0 n_gt 2607 | label-free @~33/s: TC 0.976 MLP 0.995 LIN 0.990 MF 0.993
+  20170622/patch2 e156 mix 5.0: SNR 5.0 n_gt 2607 | label-free @~30/s: TC 0.926 MLP 0.974 LIN 0.967 MF 0.972
+  20170622/patch2 e156 mix 4.0: SNR 4.0 n_gt 2607 | label-free @~25/s: TC 0.698 MLP 0.844 LIN 0.833 MF 0.853
+  20170622/patch2 e156 mix 3.0: SNR 3.0 n_gt 2607 | label-free @~16/s: TC 0.300 MLP 0.442 LIN 0.437 MF 0.464
+  20170622/patch2 e193 native: SNR 6.2 n_gt 2607 | label-free @~14/s: TC 0.981 MLP 0.994 LIN 0.980 MF 0.992
+  20170622/patch2 e193 mix 5.0: SNR 5.0 n_gt 2607 | label-free @~14/s: TC 0.924 MLP 0.954 LIN 0.874 MF 0.944
+  20170622/patch2 e193 mix 4.0: SNR 4.0 n_gt 2607 | label-free @~14/s: TC 0.678 MLP 0.740 LIN 0.717 MF 0.755
+  20170622/patch2 e193 mix 3.0: SNR 3.0 n_gt 2607 | label-free @~12/s: TC 0.307 MLP 0.354 LIN 0.368 MF 0.361
+  20170622/patch2 e93 native: SNR 6.0 n_gt 2607 | label-free @~18/s: TC 0.953 MLP 0.982 LIN 0.974 MF 0.980
+  20170622/patch2 e93 mix 5.0: SNR 5.0 n_gt 2607 | label-free @~16/s: TC 0.921 MLP 0.954 LIN 0.931 MF 0.948
+  20170622/patch2 e93 mix 4.0: SNR 4.0 n_gt 2607 | label-free @~15/s: TC 0.697 MLP 0.734 LIN 0.764 MF 0.717
+  20170622/patch2 e93 mix 3.0: SNR 3.0 n_gt 2607 | label-free @~13/s: TC 0.311 MLP 0.408 LIN 0.427 MF 0.410
+  20170622/patch2 e123 native: SNR 5.9 n_gt 2607 | label-free @~26/s: TC 0.887 MLP 0.955 LIN 0.937 MF 0.943
+  20170622/patch2 e123 mix 5.0: SNR 5.0 n_gt 2607 | label-free @~24/s: TC 0.848 MLP 0.904 LIN 0.883 MF 0.891
+  20170622/patch2 e123 mix 4.0: SNR 4.0 n_gt 2607 | label-free @~19/s: TC 0.643 MLP 0.700 LIN 0.724 MF 0.719
+  20170622/patch2 e123 mix 3.0: SNR 3.0 n_gt 2607 | label-free @~14/s: TC 0.298 MLP 0.395 LIN 0.437 MF 0.423
+  20170623/patch1 e139 native: SNR 35.7 n_gt 706 | label-free @~9/s: TC 0.996 MLP 0.999 LIN 0.999 MF 0.999
+  20170623/patch1 e139 mix 6.0: SNR 6.1 n_gt 706 | label-free @~10/s: TC 0.992 MLP 0.996 LIN 0.994 MF 0.996
+  20170623/patch1 e139 mix 5.0: SNR 5.0 n_gt 706 | label-free @~11/s: TC 0.941 MLP 0.989 LIN 0.987 MF 0.984
+  20170623/patch1 e139 mix 4.0: SNR 4.0 n_gt 706 | label-free @~15/s: TC 0.728 MLP 0.890 LIN 0.877 MF 0.885
+  20170623/patch1 e139 mix 3.0: SNR 3.1 n_gt 706 | label-free @~11/s: TC 0.326 MLP 0.599 LIN 0.605 MF 0.575
+  20170623/patch1 e234 native: SNR 12.4 n_gt 706 | label-free @~6/s: TC 0.999 MLP 1.000 LIN 1.000 MF 1.000
+  20170623/patch1 e234 mix 6.0: SNR 6.1 n_gt 706 | label-free @~10/s: TC 0.990 MLP 0.999 LIN 0.997 MF 0.997
+  20170623/patch1 e234 mix 5.0: SNR 5.0 n_gt 706 | label-free @~10/s: TC 0.938 MLP 0.986 LIN 0.980 MF 0.980
+  20170623/patch1 e234 mix 4.0: SNR 4.0 n_gt 706 | label-free @~14/s: TC 0.725 MLP 0.885 LIN 0.856 MF 0.846
+  20170623/patch1 e234 mix 3.0: SNR 3.1 n_gt 706 | label-free @~11/s: TC 0.292 MLP 0.534 LIN 0.527 MF 0.516
+  20170623/patch1 e237 native: SNR 11.2 n_gt 706 | label-free @~5/s: TC 0.999 MLP 1.000 LIN 1.000 MF 1.000
+  20170623/patch1 e237 mix 6.0: SNR 6.1 n_gt 706 | label-free @~9/s: TC 0.994 MLP 0.999 LIN 0.997 MF 0.999
+  20170623/patch1 e237 mix 5.0: SNR 5.0 n_gt 706 | label-free @~9/s: TC 0.948 MLP 0.983 LIN 0.965 MF 0.977
+  20170623/patch1 e237 mix 4.0: SNR 4.0 n_gt 706 | label-free @~13/s: TC 0.729 MLP 0.860 LIN 0.858 MF 0.843
+  20170623/patch1 e237 mix 3.0: SNR 3.1 n_gt 706 | label-free @~11/s: TC 0.336 MLP 0.567 LIN 0.571 MF 0.551
+  20170623/patch1 e167 native: SNR 9.9 n_gt 706 | label-free @~19/s: TC 0.983 MLP 0.999 LIN 0.996 MF 0.994
+  20170623/patch1 e167 mix 6.0: SNR 6.1 n_gt 706 | label-free @~13/s: TC 0.990 MLP 0.999 LIN 0.979 MF 0.990
+  20170623/patch1 e167 mix 5.0: SNR 5.0 n_gt 706 | label-free @~12/s: TC 0.949 MLP 0.989 LIN 0.932 MF 0.975
+  20170623/patch1 e167 mix 4.0: SNR 4.1 n_gt 706 | label-free @~15/s: TC 0.759 MLP 0.905 LIN 0.752 MF 0.812
+  20170623/patch1 e167 mix 3.0: SNR 3.0 n_gt 706 | label-free @~12/s: TC 0.354 MLP 0.542 LIN 0.438 MF 0.452
+  20170623/patch1 e136 native: SNR 8.4 n_gt 706 | label-free @~11/s: TC 0.993 MLP 0.999 LIN 0.997 MF 0.999
+  20170623/patch1 e136 mix 6.0: SNR 6.1 n_gt 706 | label-free @~10/s: TC 0.984 MLP 1.000 LIN 0.989 MF 0.999
+  20170623/patch1 e136 mix 5.0: SNR 5.0 n_gt 706 | label-free @~10/s: TC 0.949 MLP 0.984 LIN 0.945 MF 0.967
+  20170623/patch1 e136 mix 4.0: SNR 4.0 n_gt 706 | label-free @~12/s: TC 0.729 MLP 0.854 LIN 0.752 MF 0.782
+  20170623/patch1 e136 mix 3.0: SNR 3.0 n_gt 706 | label-free @~10/s: TC 0.317 MLP 0.527 LIN 0.442 MF 0.419
+  20170623/patch1 e166 native: SNR 7.7 n_gt 706 | label-free @~21/s: TC 0.992 MLP 0.997 LIN 0.997 MF 0.997
+  20170623/patch1 e166 mix 6.0: SNR 6.0 n_gt 706 | label-free @~22/s: TC 0.983 MLP 0.997 LIN 0.997 MF 0.997
+  20170623/patch1 e166 mix 5.0: SNR 5.0 n_gt 706 | label-free @~21/s: TC 0.931 MLP 0.979 LIN 0.976 MF 0.976
+  20170623/patch1 e166 mix 4.0: SNR 4.0 n_gt 706 | label-free @~20/s: TC 0.700 MLP 0.891 LIN 0.865 MF 0.864
+  20170623/patch1 e166 mix 3.0: SNR 3.1 n_gt 706 | label-free @~14/s: TC 0.336 MLP 0.550 LIN 0.530 MF 0.517
+  20170623/patch1 e207 native: SNR 7.5 n_gt 706 | label-free @~6/s: TC 1.000 MLP 1.000 LIN 1.000 MF 1.000
+  20170623/patch1 e207 mix 6.0: SNR 6.0 n_gt 706 | label-free @~8/s: TC 0.992 MLP 0.997 LIN 0.997 MF 0.997
+  20170623/patch1 e207 mix 5.0: SNR 5.0 n_gt 706 | label-free @~9/s: TC 0.936 MLP 0.984 LIN 0.980 MF 0.982
+  20170623/patch1 e207 mix 4.0: SNR 4.0 n_gt 706 | label-free @~12/s: TC 0.724 MLP 0.847 LIN 0.839 MF 0.816
+  20170623/patch1 e207 mix 3.0: SNR 3.1 n_gt 706 | label-free @~10/s: TC 0.336 MLP 0.534 LIN 0.533 MF 0.511
+  20170623/patch1 e138 native: SNR 5.8 n_gt 706 | label-free @~6/s: TC 0.983 MLP 0.999 LIN 0.992 MF 0.996
+  20170623/patch1 e138 mix 5.0: SNR 5.0 n_gt 706 | label-free @~8/s: TC 0.931 MLP 0.986 LIN 0.975 MF 0.972
+  20170623/patch1 e138 mix 4.0: SNR 4.0 n_gt 706 | label-free @~9/s: TC 0.710 MLP 0.779 LIN 0.722 MF 0.738
+  20170623/patch1 e138 mix 3.0: SNR 3.1 n_gt 706 | label-free @~10/s: TC 0.337 MLP 0.463 LIN 0.490 MF 0.452
+  20170623/patch1 e169 native: SNR 5.7 n_gt 706 | label-free @~9/s: TC 0.982 MLP 0.997 LIN 0.994 MF 0.997
+  20170623/patch1 e169 mix 5.0: SNR 5.0 n_gt 706 | label-free @~9/s: TC 0.925 MLP 0.983 LIN 0.976 MF 0.979
+  20170623/patch1 e169 mix 4.0: SNR 4.0 n_gt 706 | label-free @~11/s: TC 0.698 MLP 0.848 LIN 0.833 MF 0.836
+  20170623/patch1 e169 mix 3.0: SNR 3.1 n_gt 706 | label-free @~11/s: TC 0.329 MLP 0.511 LIN 0.510 MF 0.506
+  20170623/patch1 e202 native: SNR 4.2 n_gt 706 | label-free @~29/s: TC 0.775 MLP 0.919 LIN 0.916 MF 0.909
+  20170623/patch1 e202 mix 3.0: SNR 3.1 n_gt 706 | label-free @~27/s: TC 0.320 MLP 0.548 LIN 0.608 MF 0.554
+  20170627/patch1 e223 native: SNR 6.9 n_gt 7573 | label-free @~42/s: TC 0.967 MLP 0.987 LIN 0.948 MF 0.981
+  20170627/patch1 e223 mix 6.0: SNR 6.0 n_gt 7573 | label-free @~39/s: TC 0.963 MLP 0.982 LIN 0.929 MF 0.973
+  20170627/patch1 e223 mix 5.0: SNR 5.0 n_gt 7573 | label-free @~37/s: TC 0.946 MLP 0.960 LIN 0.815 MF 0.922
+  20170627/patch1 e223 mix 4.0: SNR 3.6 n_gt 7573 | label-free @~29/s: TC 0.796 MLP 0.791 LIN 0.591 MF 0.671
+  20170627/patch1 e223 mix 3.0: SNR 3.0 n_gt 7573 | label-free @~28/s: TC 0.626 MLP 0.631 LIN 0.523 MF 0.556
+  20170627/patch1 e157 native: SNR 4.3 n_gt 7573 | label-free @~38/s: TC 0.958 MLP 0.975 LIN 0.905 MF 0.969
+  20170627/patch1 e157 mix 4.0: SNR 4.0 n_gt 7573 | label-free @~37/s: TC 0.952 MLP 0.971 LIN 0.885 MF 0.957
+  20170627/patch1 e157 mix 3.0: SNR 3.0 n_gt 7573 | label-free @~35/s: TC 0.828 MLP 0.860 LIN 0.759 MF 0.809
+  20170629/patch2 e66 native: SNR 24.3 n_gt 1970 | label-free @~21/s: TC 0.993 MLP 0.999 LIN 0.999 MF 0.999
+  20170629/patch2 e66 mix 6.0: SNR 6.0 n_gt 1970 | label-free @~14/s: TC 0.992 MLP 0.998 LIN 0.995 MF 0.997
+  20170629/patch2 e66 mix 5.0: SNR 5.0 n_gt 1970 | label-free @~15/s: TC 0.973 MLP 0.993 LIN 0.983 MF 0.990
+  20170629/patch2 e66 mix 4.0: SNR 4.0 n_gt 1970 | label-free @~18/s: TC 0.783 MLP 0.924 LIN 0.886 MF 0.905
+  20170629/patch2 e66 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~12/s: TC 0.371 MLP 0.612 LIN 0.577 MF 0.558
+  20170629/patch2 e30 native: SNR 16.0 n_gt 1970 | label-free @~11/s: TC 0.997 MLP 0.999 LIN 0.998 MF 0.998
+  20170629/patch2 e30 mix 6.0: SNR 6.0 n_gt 1970 | label-free @~15/s: TC 0.993 MLP 0.998 LIN 0.964 MF 0.993
+  20170629/patch2 e30 mix 5.0: SNR 5.0 n_gt 1970 | label-free @~15/s: TC 0.972 MLP 0.989 LIN 0.918 MF 0.965
+  20170629/patch2 e30 mix 4.0: SNR 4.0 n_gt 1970 | label-free @~18/s: TC 0.781 MLP 0.827 LIN 0.703 MF 0.777
+  20170629/patch2 e30 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~13/s: TC 0.367 MLP 0.508 LIN 0.450 MF 0.428
+  20170629/patch2 e96 native: SNR 11.0 n_gt 1970 | label-free @~19/s: TC 0.996 MLP 0.999 LIN 0.980 MF 0.996
+  20170629/patch2 e96 mix 6.0: SNR 5.4 n_gt 1970 | label-free @~14/s: TC 0.987 MLP 0.995 LIN 0.831 MF 0.909
+  20170629/patch2 e96 mix 5.0: SNR 4.5 n_gt 1970 | label-free @~14/s: TC 0.922 MLP 0.973 LIN 0.736 MF 0.825
+  20170629/patch2 e96 mix 4.0: SNR 3.6 n_gt 1970 | label-free @~15/s: TC 0.653 MLP 0.791 LIN 0.575 MF 0.650
+  20170629/patch2 e96 mix 3.0: SNR 2.7 n_gt 1970 | label-free @~11/s: TC 0.278 MLP 0.404 LIN 0.311 MF 0.321
+  20170629/patch2 e31 native: SNR 10.1 n_gt 1970 | label-free @~13/s: TC 0.996 MLP 0.999 LIN 0.999 MF 0.999
+  20170629/patch2 e31 mix 6.0: SNR 6.0 n_gt 1970 | label-free @~14/s: TC 0.993 MLP 0.998 LIN 0.996 MF 0.998
+  20170629/patch2 e31 mix 5.0: SNR 5.0 n_gt 1970 | label-free @~14/s: TC 0.970 MLP 0.990 LIN 0.960 MF 0.981
+  20170629/patch2 e31 mix 4.0: SNR 4.0 n_gt 1970 | label-free @~17/s: TC 0.789 MLP 0.891 LIN 0.826 MF 0.861
+  20170629/patch2 e31 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~13/s: TC 0.365 MLP 0.582 LIN 0.554 MF 0.537
+  20170629/patch2 e69 native: SNR 6.9 n_gt 1970 | label-free @~12/s: TC 0.997 MLP 0.999 LIN 0.993 MF 0.998
+  20170629/patch2 e69 mix 6.0: SNR 6.0 n_gt 1970 | label-free @~13/s: TC 0.995 MLP 0.999 LIN 0.960 MF 0.996
+  20170629/patch2 e69 mix 5.0: SNR 5.0 n_gt 1970 | label-free @~14/s: TC 0.960 MLP 0.990 LIN 0.919 MF 0.969
+  20170629/patch2 e69 mix 4.0: SNR 4.0 n_gt 1970 | label-free @~15/s: TC 0.771 MLP 0.879 LIN 0.750 MF 0.797
+  20170629/patch2 e69 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~12/s: TC 0.385 MLP 0.509 LIN 0.399 MF 0.434
+  20170629/patch2 e3 native: SNR 6.8 n_gt 1970 | label-free @~12/s: TC 0.998 MLP 0.998 LIN 0.989 MF 0.998
+  20170629/patch2 e3 mix 6.0: SNR 6.0 n_gt 1970 | label-free @~13/s: TC 0.996 MLP 0.999 LIN 0.966 MF 0.992
+  20170629/patch2 e3 mix 5.0: SNR 5.0 n_gt 1970 | label-free @~14/s: TC 0.962 MLP 0.987 LIN 0.884 MF 0.951
+  20170629/patch2 e3 mix 4.0: SNR 4.0 n_gt 1970 | label-free @~16/s: TC 0.773 MLP 0.815 LIN 0.683 MF 0.770
+  20170629/patch2 e3 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~13/s: TC 0.391 MLP 0.448 LIN 0.389 MF 0.426
+  20170629/patch2 e97 native: SNR 5.5 n_gt 1970 | label-free @~17/s: TC 0.979 MLP 0.995 LIN 0.988 MF 0.992
+  20170629/patch2 e97 mix 5.0: SNR 5.0 n_gt 1970 | label-free @~16/s: TC 0.963 MLP 0.989 LIN 0.977 MF 0.982
+  20170629/patch2 e97 mix 4.0: SNR 4.0 n_gt 1970 | label-free @~15/s: TC 0.793 MLP 0.920 LIN 0.840 MF 0.874
+  20170629/patch2 e97 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~13/s: TC 0.409 MLP 0.623 LIN 0.509 MF 0.548
+  20170629/patch2 e67 native: SNR 5.3 n_gt 1970 | label-free @~14/s: TC 0.983 MLP 0.996 LIN 0.995 MF 0.995
+  20170629/patch2 e67 mix 5.0: SNR 5.0 n_gt 1970 | label-free @~14/s: TC 0.970 MLP 0.995 LIN 0.990 MF 0.991
+  20170629/patch2 e67 mix 4.0: SNR 4.0 n_gt 1970 | label-free @~13/s: TC 0.781 MLP 0.921 LIN 0.878 MF 0.881
+  20170629/patch2 e67 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~12/s: TC 0.372 MLP 0.593 LIN 0.564 MF 0.583
+  20170629/patch2 e0 native: SNR 4.9 n_gt 1970 | label-free @~15/s: TC 0.956 MLP 0.973 LIN 0.938 MF 0.958
+  20170629/patch2 e0 mix 4.0: SNR 4.0 n_gt 1970 | label-free @~14/s: TC 0.786 MLP 0.813 LIN 0.770 MF 0.791
+  20170629/patch2 e0 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~13/s: TC 0.364 MLP 0.431 LIN 0.476 MF 0.465
+  20170629/patch2 e26 native: SNR 4.1 n_gt 1970 | label-free @~13/s: TC 0.819 MLP 0.791 LIN 0.662 MF 0.727
+  20170629/patch2 e26 mix 3.0: SNR 3.0 n_gt 1970 | label-free @~12/s: TC 0.391 MLP 0.360 LIN 0.284 MF 0.307
+  20170629/patch3 e187 native: SNR 11.6 n_gt 3722 | label-free @~30/s: TC 0.974 MLP 0.979 LIN 0.978 MF 0.978
+  20170629/patch3 e187 mix 6.0: SNR 6.0 n_gt 3722 | label-free @~25/s: TC 0.970 MLP 0.976 LIN 0.906 MF 0.973
+  20170629/patch3 e187 mix 5.0: SNR 5.0 n_gt 3722 | label-free @~25/s: TC 0.967 MLP 0.972 LIN 0.879 MF 0.951
+  20170629/patch3 e187 mix 4.0: SNR 4.0 n_gt 3722 | label-free @~28/s: TC 0.902 MLP 0.908 LIN 0.731 MF 0.828
+  20170629/patch3 e187 mix 3.0: SNR 3.0 n_gt 3722 | label-free @~20/s: TC 0.581 MLP 0.584 LIN 0.480 MF 0.521
+  20170629/patch3 e175 native: SNR 7.1 n_gt 3722 | label-free @~33/s: TC 0.971 MLP 0.974 LIN 0.646 MF 0.879
+  20170629/patch3 e175 mix 6.0: SNR 5.3 n_gt 3722 | label-free @~29/s: TC 0.969 MLP 0.898 LIN 0.598 MF 0.747
+  20170629/patch3 e175 mix 5.0: SNR 4.5 n_gt 3722 | label-free @~29/s: TC 0.942 MLP 0.856 LIN 0.557 MF 0.685
+  20170629/patch3 e175 mix 4.0: SNR 3.6 n_gt 3722 | label-free @~28/s: TC 0.768 MLP 0.683 LIN 0.449 MF 0.533
+  20170629/patch3 e175 mix 3.0: SNR 2.7 n_gt 3722 | label-free @~18/s: TC 0.382 MLP 0.378 LIN 0.283 MF 0.326
+  20170629/patch3 e151 native: SNR 5.1 n_gt 3722 | label-free @~28/s: TC 0.966 MLP 0.973 LIN 0.943 MF 0.968
+  20170629/patch3 e151 mix 4.0: SNR 4.0 n_gt 3722 | label-free @~25/s: TC 0.909 MLP 0.952 LIN 0.847 MF 0.901
+  20170629/patch3 e151 mix 3.0: SNR 3.0 n_gt 3722 | label-free @~20/s: TC 0.592 MLP 0.640 LIN 0.543 MF 0.572
+  20170629/patch3 e188 native: SNR 4.1 n_gt 3722 | label-free @~23/s: TC 0.906 MLP 0.715 LIN 0.510 MF 0.626
+  20170629/patch3 e188 mix 3.0: SNR 3.0 n_gt 3722 | label-free @~16/s: TC 0.530 MLP 0.382 LIN 0.250 MF 0.304
+  20170630/patch1 e234 native: SNR 14.7 n_gt 2321 | label-free @~19/s: TC 0.994 MLP 1.000 LIN 0.999 MF 0.999
+  20170630/patch1 e234 mix 6.0: SNR 6.0 n_gt 2321 | label-free @~16/s: TC 0.990 MLP 0.997 LIN 0.991 MF 0.995
+  20170630/patch1 e234 mix 5.0: SNR 5.0 n_gt 2321 | label-free @~16/s: TC 0.969 MLP 0.993 LIN 0.966 MF 0.982
+  20170630/patch1 e234 mix 4.0: SNR 4.0 n_gt 2321 | label-free @~19/s: TC 0.807 MLP 0.928 LIN 0.866 MF 0.895
+  20170630/patch1 e234 mix 3.0: SNR 3.0 n_gt 2321 | label-free @~13/s: TC 0.405 MLP 0.601 LIN 0.554 MF 0.585
+  20170630/patch1 e136 native: SNR 7.5 n_gt 2321 | label-free @~17/s: TC 0.989 MLP 0.998 LIN 0.995 MF 0.998
+  20170630/patch1 e136 mix 6.0: SNR 6.0 n_gt 2321 | label-free @~16/s: TC 0.986 MLP 0.997 LIN 0.976 MF 0.995
+  20170630/patch1 e136 mix 5.0: SNR 5.0 n_gt 2321 | label-free @~15/s: TC 0.962 MLP 0.987 LIN 0.903 MF 0.961
+  20170630/patch1 e136 mix 4.0: SNR 4.0 n_gt 2321 | label-free @~16/s: TC 0.799 MLP 0.878 LIN 0.749 MF 0.812
+  20170630/patch1 e136 mix 3.0: SNR 3.0 n_gt 2321 | label-free @~13/s: TC 0.411 MLP 0.519 LIN 0.440 MF 0.472
+  20170630/patch1 e173 native: SNR 7.7 n_gt 2321 | label-free @~10/s: TC 0.998 MLP 0.999 LIN 0.831 MF 0.994
+  20170630/patch1 e173 mix 6.0: SNR 6.0 n_gt 2321 | label-free @~12/s: TC 0.994 MLP 0.965 LIN 0.692 MF 0.931
+  20170630/patch1 e173 mix 5.0: SNR 5.0 n_gt 2321 | label-free @~14/s: TC 0.976 MLP 0.947 LIN 0.640 MF 0.888
+  20170630/patch1 e173 mix 4.0: SNR 4.0 n_gt 2321 | label-free @~16/s: TC 0.818 MLP 0.505 LIN 0.288 MF 0.512
+  20170630/patch1 e173 mix 3.0: SNR 3.0 n_gt 2321 | label-free @~12/s: TC 0.403 MLP 0.340 LIN 0.205 MF 0.300
+  20170630/patch1 e139 native: SNR 5.5 n_gt 2321 | label-free @~23/s: TC 0.982 MLP 0.992 LIN 0.966 MF 0.988
+  20170630/patch1 e139 mix 5.0: SNR 5.0 n_gt 2321 | label-free @~23/s: TC 0.960 MLP 0.979 LIN 0.935 MF 0.960
+  20170630/patch1 e139 mix 4.0: SNR 4.0 n_gt 2321 | label-free @~20/s: TC 0.803 MLP 0.846 LIN 0.713 MF 0.780
+  20170630/patch1 e139 mix 3.0: SNR 3.0 n_gt 2321 | label-free @~16/s: TC 0.407 MLP 0.502 LIN 0.430 MF 0.430
+  20170706/patch1 e140 native: SNR 17.9 n_gt 3004 | label-free @~23/s: TC 0.972 MLP 0.999 LIN 0.978 MF 0.997
+  20170706/patch1 e140 mix 6.0: SNR 6.0 n_gt 3004 | label-free @~18/s: TC 0.979 MLP 0.972 LIN 0.906 MF 0.946
+  20170706/patch1 e140 mix 5.0: SNR 5.0 n_gt 3004 | label-free @~18/s: TC 0.941 MLP 0.928 LIN 0.838 MF 0.898
+  20170706/patch1 e140 mix 4.0: SNR 4.0 n_gt 3004 | label-free @~21/s: TC 0.827 MLP 0.822 LIN 0.724 MF 0.786
+  20170706/patch1 e140 mix 3.0: SNR 3.0 n_gt 3004 | label-free @~16/s: TC 0.508 MLP 0.538 LIN 0.488 MF 0.519
+  20170706/patch2 e43 native: SNR 10.2 n_gt 6332 | label-free @~71/s: TC 0.926 MLP 0.944 LIN 0.941 MF 0.943
+  20170706/patch2 e43 mix 6.0: SNR 5.4 n_gt 6332 | label-free @~54/s: TC 0.920 MLP 0.935 LIN 0.924 MF 0.929
+  20170706/patch2 e43 mix 5.0: SNR 4.5 n_gt 6332 | label-free @~51/s: TC 0.870 MLP 0.905 LIN 0.881 MF 0.889
+  20170706/patch2 e43 mix 4.0: SNR 3.6 n_gt 6332 | label-free @~46/s: TC 0.669 MLP 0.792 LIN 0.760 MF 0.765
+  20170706/patch2 e43 mix 3.0: SNR 2.7 n_gt 6332 | label-free @~31/s: TC 0.322 MLP 0.461 LIN 0.464 MF 0.454
+  20170706/patch3 e102 native: SNR 11.5 n_gt 510 | label-free @~64/s: TC 0.851 MLP 0.961 LIN 0.961 MF 0.961
+  20170706/patch3 e102 mix 6.0: SNR 5.4 n_gt 510 | label-free @~39/s: TC 0.878 MLP 0.961 LIN 0.957 MF 0.951
+  20170706/patch3 e102 mix 5.0: SNR 4.6 n_gt 510 | label-free @~36/s: TC 0.814 MLP 0.920 LIN 0.920 MF 0.908
+  20170706/patch3 e102 mix 4.0: SNR 3.7 n_gt 510 | label-free @~32/s: TC 0.627 MLP 0.796 LIN 0.800 MF 0.794
+  20170706/patch3 e102 mix 3.0: SNR 2.7 n_gt 510 | label-free @~20/s: TC 0.253 MLP 0.494 LIN 0.531 MF 0.482
+  20170706/patch3 e75 native: SNR 5.5 n_gt 510 | label-free @~54/s: TC 0.851 MLP 0.939 LIN 0.918 MF 0.929
+  20170706/patch3 e75 mix 5.0: SNR 5.0 n_gt 510 | label-free @~49/s: TC 0.837 MLP 0.927 LIN 0.898 MF 0.912
+  20170706/patch3 e75 mix 4.0: SNR 3.6 n_gt 510 | label-free @~28/s: TC 0.624 MLP 0.776 LIN 0.727 MF 0.757
+  20170706/patch3 e75 mix 3.0: SNR 2.7 n_gt 510 | label-free @~18/s: TC 0.310 MLP 0.386 LIN 0.386 MF 0.361
+  20170706/patch3 e7 native: SNR 4.4 n_gt 510 | label-free @~64/s: TC 0.802 MLP 0.904 LIN 0.894 MF 0.896
+  20170706/patch3 e7 mix 4.0: SNR 3.6 n_gt 510 | label-free @~49/s: TC 0.590 MLP 0.788 LIN 0.778 MF 0.784
+  20170706/patch3 e7 mix 3.0: SNR 2.7 n_gt 510 | label-free @~33/s: TC 0.251 MLP 0.367 LIN 0.441 MF 0.404
+  20170713/patch1 e209 native: SNR 14.0 n_gt 6370 | label-free @~46/s: TC 0.989 MLP 0.999 LIN 0.999 MF 0.999
+  20170713/patch1 e209 mix 6.0: SNR 5.4 n_gt 6370 | label-free @~28/s: TC 0.978 MLP 0.992 LIN 0.978 MF 0.988
+  20170713/patch1 e209 mix 5.0: SNR 4.5 n_gt 6370 | label-free @~26/s: TC 0.891 MLP 0.939 LIN 0.915 MF 0.941
+  20170713/patch1 e209 mix 4.0: SNR 3.6 n_gt 6370 | label-free @~23/s: TC 0.588 MLP 0.661 LIN 0.708 MF 0.690
+  20170713/patch1 e209 mix 3.0: SNR 2.7 n_gt 6370 | label-free @~13/s: TC 0.207 MLP 0.307 LIN 0.352 MF 0.322
+  20170713/patch1 e239 native: SNR 6.5 n_gt 6370 | label-free @~45/s: TC 0.987 MLP 0.996 LIN 0.995 MF 0.996
+  20170713/patch1 e239 mix 6.0: SNR 5.4 n_gt 6370 | label-free @~37/s: TC 0.976 MLP 0.994 LIN 0.987 MF 0.992
+  20170713/patch1 e239 mix 5.0: SNR 4.5 n_gt 6370 | label-free @~34/s: TC 0.879 MLP 0.954 LIN 0.924 MF 0.940
+  20170713/patch1 e239 mix 4.0: SNR 3.6 n_gt 6370 | label-free @~25/s: TC 0.573 MLP 0.689 LIN 0.646 MF 0.667
+  20170713/patch1 e239 mix 3.0: SNR 2.7 n_gt 6370 | label-free @~14/s: TC 0.206 MLP 0.317 LIN 0.313 MF 0.319
+  20170713/patch1 e208 native: SNR 4.0 n_gt 6370 | label-free @~64/s: TC 0.709 MLP 0.792 LIN 0.749 MF 0.790
+  20170713/patch1 e208 mix 3.0: SNR 2.7 n_gt 6370 | label-free @~28/s: TC 0.229 MLP 0.237 LIN 0.273 MF 0.269
+  20170725/patch1 e131 native: SNR 23.3 n_gt 376 | label-free @~6/s: TC 0.971 MLP 0.995 LIN 0.989 MF 0.989
+  20170725/patch1 e131 mix 6.0: SNR 6.0 n_gt 376 | label-free @~9/s: TC 0.947 MLP 0.968 LIN 0.960 MF 0.960
+  20170725/patch1 e131 mix 5.0: SNR 5.0 n_gt 376 | label-free @~9/s: TC 0.902 MLP 0.941 LIN 0.936 MF 0.936
+  20170725/patch1 e131 mix 4.0: SNR 4.0 n_gt 376 | label-free @~14/s: TC 0.681 MLP 0.848 LIN 0.838 MF 0.846
+  20170725/patch1 e131 mix 3.0: SNR 3.0 n_gt 376 | label-free @~11/s: TC 0.335 MLP 0.561 LIN 0.545 MF 0.519
+  20170725/patch1 e161 native: SNR 9.0 n_gt 376 | label-free @~4/s: TC 0.957 MLP 0.984 LIN 0.981 MF 0.984
+  20170725/patch1 e161 mix 6.0: SNR 6.0 n_gt 376 | label-free @~8/s: TC 0.939 MLP 0.952 LIN 0.952 MF 0.955
+  20170725/patch1 e161 mix 5.0: SNR 5.0 n_gt 376 | label-free @~9/s: TC 0.904 MLP 0.941 LIN 0.926 MF 0.936
+  20170725/patch1 e161 mix 4.0: SNR 4.0 n_gt 376 | label-free @~14/s: TC 0.686 MLP 0.824 LIN 0.822 MF 0.824
+  20170725/patch1 e161 mix 3.0: SNR 3.0 n_gt 376 | label-free @~12/s: TC 0.367 MLP 0.580 LIN 0.577 MF 0.569
+  20170725/patch1 e229 native: SNR 7.3 n_gt 376 | label-free @~17/s: TC 0.838 MLP 0.928 LIN 0.899 MF 0.923
+  20170725/patch1 e229 mix 6.0: SNR 5.4 n_gt 376 | label-free @~10/s: TC 0.838 MLP 0.902 LIN 0.859 MF 0.888
+  20170725/patch1 e229 mix 5.0: SNR 4.5 n_gt 376 | label-free @~10/s: TC 0.771 MLP 0.875 LIN 0.811 MF 0.859
+  20170725/patch1 e229 mix 4.0: SNR 3.5 n_gt 376 | label-free @~12/s: TC 0.559 MLP 0.617 LIN 0.590 MF 0.644
+  20170725/patch1 e229 mix 3.0: SNR 2.6 n_gt 376 | label-free @~10/s: TC 0.237 MLP 0.351 LIN 0.330 MF 0.338
+  20170725/patch1 e134 native: SNR 6.3 n_gt 376 | label-free @~7/s: TC 0.915 MLP 0.941 LIN 0.891 MF 0.920
+  20170725/patch1 e134 mix 6.0: SNR 6.0 n_gt 376 | label-free @~7/s: TC 0.910 MLP 0.949 LIN 0.899 MF 0.928
+  20170725/patch1 e134 mix 5.0: SNR 5.0 n_gt 376 | label-free @~8/s: TC 0.864 MLP 0.926 LIN 0.814 MF 0.888
+  20170725/patch1 e134 mix 4.0: SNR 4.0 n_gt 376 | label-free @~10/s: TC 0.742 MLP 0.747 LIN 0.630 MF 0.699
+  20170725/patch1 e134 mix 3.0: SNR 3.0 n_gt 376 | label-free @~10/s: TC 0.434 MLP 0.511 LIN 0.434 MF 0.484
+  20170725/patch1 e198 native: SNR 5.4 n_gt 376 | label-free @~10/s: TC 0.864 MLP 0.896 LIN 0.856 MF 0.886
+  20170725/patch1 e198 mix 5.0: SNR 5.0 n_gt 376 | label-free @~10/s: TC 0.830 MLP 0.872 LIN 0.816 MF 0.856
+  20170725/patch1 e198 mix 4.0: SNR 4.0 n_gt 376 | label-free @~10/s: TC 0.686 MLP 0.763 LIN 0.715 MF 0.758
+  20170725/patch1 e198 mix 3.0: SNR 3.0 n_gt 376 | label-free @~11/s: TC 0.391 MLP 0.521 LIN 0.487 MF 0.513
+  20170725/patch1 e159 native: SNR 4.9 n_gt 376 | label-free @~17/s: TC 0.864 MLP 0.880 LIN 0.856 MF 0.875
+  20170725/patch1 e159 mix 4.0: SNR 4.0 n_gt 376 | label-free @~16/s: TC 0.681 MLP 0.745 LIN 0.689 MF 0.721
+  20170725/patch1 e159 mix 3.0: SNR 3.0 n_gt 376 | label-free @~16/s: TC 0.383 MLP 0.441 LIN 0.428 MF 0.439
+  20170726/patch1 e30 native: SNR 16.6 n_gt 2328 | label-free @~14/s: TC 0.994 MLP 1.000 LIN 0.999 MF 0.999
+  20170726/patch1 e30 mix 6.0: SNR 6.0 n_gt 2328 | label-free @~15/s: TC 0.974 MLP 0.990 LIN 0.938 MF 0.968
+  20170726/patch1 e30 mix 5.0: SNR 5.0 n_gt 2328 | label-free @~15/s: TC 0.928 MLP 0.960 LIN 0.848 MF 0.900
+  20170726/patch1 e30 mix 4.0: SNR 4.0 n_gt 2328 | label-free @~18/s: TC 0.714 MLP 0.794 LIN 0.702 MF 0.738
+  20170726/patch1 e30 mix 3.0: SNR 3.0 n_gt 2328 | label-free @~13/s: TC 0.335 MLP 0.430 LIN 0.399 MF 0.394
+  20170726/patch1 e3 native: SNR 7.3 n_gt 2328 | label-free @~14/s: TC 0.993 MLP 0.998 LIN 0.986 MF 0.997
+  20170726/patch1 e3 mix 6.0: SNR 6.0 n_gt 2328 | label-free @~15/s: TC 0.976 MLP 0.992 LIN 0.952 MF 0.985
+  20170726/patch1 e3 mix 5.0: SNR 5.0 n_gt 2328 | label-free @~16/s: TC 0.908 MLP 0.958 LIN 0.848 MF 0.915
+  20170726/patch1 e3 mix 4.0: SNR 4.0 n_gt 2328 | label-free @~17/s: TC 0.707 MLP 0.764 LIN 0.629 MF 0.699
+  20170726/patch1 e3 mix 3.0: SNR 3.0 n_gt 2328 | label-free @~13/s: TC 0.334 MLP 0.410 LIN 0.384 MF 0.397
+  20170726/patch1 e2 native: SNR 5.7 n_gt 2328 | label-free @~13/s: TC 0.988 MLP 0.933 LIN 0.541 MF 0.802
+  20170726/patch1 e2 mix 5.0: SNR 5.0 n_gt 2328 | label-free @~13/s: TC 0.957 MLP 0.849 LIN 0.471 MF 0.687
+  20170726/patch1 e2 mix 4.0: SNR 4.0 n_gt 2328 | label-free @~13/s: TC 0.807 MLP 0.542 LIN 0.251 MF 0.404
+  20170726/patch1 e2 mix 3.0: SNR 3.0 n_gt 2328 | label-free @~12/s: TC 0.405 MLP 0.371 LIN 0.173 MF 0.247
+  20170728/patch2 e118 native: SNR 19.2 n_gt 4595 | label-free @~36/s: TC 0.959 MLP 0.997 LIN 0.997 MF 0.997
+  20170728/patch2 e118 mix 6.0: SNR 6.0 n_gt 4595 | label-free @~25/s: TC 0.987 MLP 0.997 LIN 0.995 MF 0.996
+  20170728/patch2 e118 mix 5.0: SNR 5.0 n_gt 4595 | label-free @~25/s: TC 0.968 MLP 0.992 LIN 0.988 MF 0.990
+  20170728/patch2 e118 mix 4.0: SNR 4.0 n_gt 4595 | label-free @~28/s: TC 0.815 MLP 0.906 LIN 0.912 MF 0.903
+  20170728/patch2 e118 mix 3.0: SNR 3.0 n_gt 4595 | label-free @~19/s: TC 0.440 MLP 0.624 LIN 0.634 MF 0.610
+  20170728/patch2 e88 native: SNR 9.3 n_gt 4595 | label-free @~47/s: TC 0.950 MLP 0.991 LIN 0.990 MF 0.990
+  20170728/patch2 e88 mix 6.0: SNR 6.0 n_gt 4595 | label-free @~35/s: TC 0.955 MLP 0.987 LIN 0.983 MF 0.984
+  20170728/patch2 e88 mix 5.0: SNR 5.0 n_gt 4595 | label-free @~30/s: TC 0.945 MLP 0.982 LIN 0.968 MF 0.978
+  20170728/patch2 e88 mix 4.0: SNR 4.0 n_gt 4595 | label-free @~28/s: TC 0.815 MLP 0.894 LIN 0.883 MF 0.887
+  20170728/patch2 e88 mix 3.0: SNR 3.0 n_gt 4595 | label-free @~19/s: TC 0.441 MLP 0.579 LIN 0.587 MF 0.562
+  20170728/patch2 e52 native: SNR 5.7 n_gt 4595 | label-free @~50/s: TC 0.940 MLP 0.978 LIN 0.966 MF 0.975
+  20170728/patch2 e52 mix 5.0: SNR 5.0 n_gt 4595 | label-free @~46/s: TC 0.930 MLP 0.966 LIN 0.950 MF 0.962
+  20170728/patch2 e52 mix 4.0: SNR 3.6 n_gt 4595 | label-free @~27/s: TC 0.627 MLP 0.705 LIN 0.677 MF 0.709
+  20170728/patch2 e52 mix 3.0: SNR 2.7 n_gt 4595 | label-free @~16/s: TC 0.249 MLP 0.283 LIN 0.324 MF 0.307
+  20170728/patch2 e20 native: SNR 4.9 n_gt 4595 | label-free @~25/s: TC 0.926 MLP 0.974 LIN 0.958 MF 0.969
+  20170728/patch2 e20 mix 4.0: SNR 4.0 n_gt 4595 | label-free @~22/s: TC 0.777 MLP 0.898 LIN 0.880 MF 0.899
+  20170728/patch2 e20 mix 3.0: SNR 3.0 n_gt 4595 | label-free @~18/s: TC 0.404 MLP 0.560 LIN 0.553 MF 0.571
+  20170803/patch1 e99 native: SNR 12.6 n_gt 7427 | label-free @~71/s: TC 0.948 MLP 0.994 LIN 0.994 MF 0.994
+  20170803/patch1 e99 mix 6.0: SNR 5.4 n_gt 7427 | label-free @~34/s: TC 0.968 MLP 0.982 LIN 0.964 MF 0.977
+  20170803/patch1 e99 mix 5.0: SNR 4.5 n_gt 7427 | label-free @~30/s: TC 0.878 MLP 0.918 LIN 0.856 MF 0.900
+  20170803/patch1 e99 mix 4.0: SNR 3.6 n_gt 7427 | label-free @~24/s: TC 0.572 MLP 0.635 LIN 0.629 MF 0.638
+  20170803/patch1 e99 mix 3.0: SNR 3.0 n_gt 7427 | label-free @~21/s: TC 0.367 MLP 0.436 LIN 0.458 MF 0.450
+  20170803/patch1 e69 native: SNR 9.8 n_gt 7427 | label-free @~57/s: TC 0.974 MLP 0.997 LIN 0.996 MF 0.997
+  20170803/patch1 e69 mix 6.0: SNR 6.0 n_gt 7427 | label-free @~39/s: TC 0.980 MLP 0.991 LIN 0.975 MF 0.988
+  20170803/patch1 e69 mix 5.0: SNR 5.0 n_gt 7427 | label-free @~35/s: TC 0.942 MLP 0.962 LIN 0.915 MF 0.946
+  20170803/patch1 e69 mix 4.0: SNR 4.0 n_gt 7427 | label-free @~32/s: TC 0.738 MLP 0.788 LIN 0.775 MF 0.795
+  20170803/patch1 e69 mix 3.0: SNR 3.0 n_gt 7427 | label-free @~20/s: TC 0.352 MLP 0.420 LIN 0.410 MF 0.410
+  20170803/patch1 e216 native: SNR 9.7 n_gt 7427 | label-free @~49/s: TC 0.986 MLP 0.999 LIN 0.998 MF 0.998
+  20170803/patch1 e216 mix 6.0: SNR 6.0 n_gt 7427 | label-free @~36/s: TC 0.981 MLP 0.995 LIN 0.986 MF 0.991
+  20170803/patch1 e216 mix 5.0: SNR 5.0 n_gt 7427 | label-free @~34/s: TC 0.939 MLP 0.982 LIN 0.951 MF 0.967
+  20170803/patch1 e216 mix 4.0: SNR 4.0 n_gt 7427 | label-free @~31/s: TC 0.729 MLP 0.862 LIN 0.810 MF 0.833
+  20170803/patch1 e216 mix 3.0: SNR 3.0 n_gt 7427 | label-free @~20/s: TC 0.364 MLP 0.535 LIN 0.496 MF 0.521
+  20170803/patch1 e96 native: SNR 6.5 n_gt 7427 | label-free @~62/s: TC 0.994 MLP 0.998 LIN 0.994 MF 0.997
+  20170803/patch1 e96 mix 6.0: SNR 6.0 n_gt 7427 | label-free @~59/s: TC 0.990 MLP 0.998 LIN 0.991 MF 0.996
+  20170803/patch1 e96 mix 5.0: SNR 5.0 n_gt 7427 | label-free @~52/s: TC 0.950 MLP 0.974 LIN 0.949 MF 0.968
+  20170803/patch1 e96 mix 4.0: SNR 3.6 n_gt 7427 | label-free @~27/s: TC 0.567 MLP 0.676 LIN 0.619 MF 0.673
+  20170803/patch1 e96 mix 3.0: SNR 3.0 n_gt 7427 | label-free @~23/s: TC 0.349 MLP 0.431 LIN 0.442 MF 0.434
+  cortex/c37 e32 native: SNR 7.4 n_gt 568 | label-free @~18/s: TC 0.937 MLP 0.988 LIN 0.988 MF 0.988
+  cortex/c37 e32 mix 6.0: SNR 6.0 n_gt 568 | label-free @~12/s: TC 0.923 MLP 0.975 LIN 0.974 MF 0.975
+  cortex/c37 e32 mix 5.0: SNR 5.0 n_gt 568 | label-free @~8/s: TC 0.873 MLP 0.938 LIN 0.915 MF 0.914
+  cortex/c37 e32 mix 4.0: SNR 4.0 n_gt 568 | label-free @~5/s: TC 0.713 MLP 0.810 LIN 0.741 MF 0.768
+  cortex/c37 e32 mix 3.0: SNR 3.0 n_gt 568 | label-free @~5/s: TC 0.338 MLP 0.342 LIN 0.327 MF 0.364
+  cortex/c37 e30 native: SNR 5.2 n_gt 568 | label-free @~16/s: TC 0.866 MLP 0.952 LIN 0.944 MF 0.944
+  cortex/c37 e30 mix 4.0: SNR 4.0 n_gt 568 | label-free @~9/s: TC 0.653 MLP 0.782 LIN 0.757 MF 0.743
+  cortex/c37 e30 mix 3.0: SNR 3.0 n_gt 568 | label-free @~5/s: TC 0.294 MLP 0.394 LIN 0.370 MF 0.382
+  cortex/c37 e34 native: SNR 5.2 n_gt 568 | label-free @~19/s: TC 0.859 MLP 0.931 LIN 0.849 MF 0.894
+  cortex/c37 e34 mix 4.0: SNR 4.0 n_gt 568 | label-free @~12/s: TC 0.683 MLP 0.667 LIN 0.600 MF 0.646
+  cortex/c37 e34 mix 3.0: SNR 3.0 n_gt 568 | label-free @~7/s: TC 0.368 MLP 0.350 LIN 0.349 MF 0.352
+  cortex/c37 e36 native: SNR 4.5 n_gt 568 | label-free @~19/s: TC 0.745 MLP 0.840 LIN 0.741 MF 0.787
+  cortex/c37 e36 mix 4.0: SNR 4.0 n_gt 568 | label-free @~16/s: TC 0.637 MLP 0.695 LIN 0.621 MF 0.676
+  cortex/c37 e36 mix 3.0: SNR 3.0 n_gt 568 | label-free @~11/s: TC 0.320 MLP 0.384 LIN 0.354 MF 0.364
+all {'label_free_mlp8': (0.025, 16, 2, 2), 'label_free_cnn8': (0.025, 16, 3, 1), 'label_free_lin32': (-0.017, 10, 2, 8), 'label_free_tmpl': (0.014, 14, 3, 3)}
+Marques-Smith 2018 (rat cortex, Neuropixels) {'label_free_mlp8': (0.076, 1, 0, 0), 'label_free_cnn8': (0.082, 1, 0, 0), 'label_free_lin32': (0.029, 1, 0, 0), 'label_free_tmpl': (0.051, 1, 0, 0)}
+Yger 2018 (mouse retina, MEA) {'label_free_mlp8': (0.023, 15, 2, 2), 'label_free_cnn8': (0.022, 15, 3, 1), 'label_free_lin32': (-0.019, 9, 2, 8), 'label_free_tmpl': (0.012, 13, 3, 3)}
+cells without a >=4 sigma electrode: ['cortex/c19', 'cortex/c24']
